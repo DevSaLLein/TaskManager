@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using TaskManager.Context;
+using TaskManager.Enums;
 using TaskManager.Models;
 
 namespace TaskManager.Controllers
@@ -49,10 +50,11 @@ namespace TaskManager.Controllers
         }
 
         [HttpGet("ObterPorStatus/{status}")]
-        public IActionResult GetAllTasksByStatus(int status)
+        public IActionResult GetAllTasksByStatus(StatusEnum status)
         {
-
-            return Ok(status);
+            var tasks = _context.Tasks.Where(task => task.Status == status);
+            
+            return Ok(tasks);
         }
 
         [HttpGet("ObterPorData/{date}")]
@@ -62,7 +64,6 @@ namespace TaskManager.Controllers
 
             return Ok(task);
         }
-
 
         [HttpPut("{id}")]
         public IActionResult UpdateTask(int id, TaskItem task)
