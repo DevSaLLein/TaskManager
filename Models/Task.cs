@@ -6,7 +6,6 @@ namespace TaskManager.Models
     public class TaskItem
     {
         [Key]
-        [Required]
         public int Id { get; set; }
 
         public string Titulo { get; set; }

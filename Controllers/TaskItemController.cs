@@ -13,12 +13,16 @@ namespace TaskManager.Controllers
         [HttpPost]
         public IActionResult CreateNewTask(TaskItem task)
         {
-            if(_context.Tasks.Find(task) != null) return Conflict("Task already created");
+            if(_context.Tasks.Find(task.Id) != null) return Conflict("Task already created");
+
+            if (task.Data == DateTime.MinValue) 
+                return BadRequest(new { Erro = "A data da tarefa não pode ser vazia" })
+            ;
 
             _context.Add(task);
             _context.SaveChanges();
 
-            return CreatedAtAction(nameof(GetTaskById), new {id = task.Id});
+            return CreatedAtAction(nameof(GetTaskById), new {id = task.Id}, task);
         }
 
         [HttpGet("{id}")]
@@ -30,11 +34,45 @@ namespace TaskManager.Controllers
             return Ok(task);
         }
 
+        [HttpGet("ObterTodos")]
+        public IActionResult GetAllTasks()
+        {
+            return Ok(_context.Tasks.ToList());
+        }
+
+        [HttpGet("ObterPorTitulo/{title}")]
+        public IActionResult GetAllTasksByTitle(string title)
+        {
+            var task = _context.Tasks.Where(task => task.Titulo.Contains(title));
+
+            return Ok(task);
+        }
+
+        [HttpGet("ObterPorStatus/{status}")]
+        public IActionResult GetAllTasksByStatus(int status)
+        {
+
+            return Ok(status);
+        }
+
+        [HttpGet("ObterPorData/{date}")]
+        public IActionResult GetAllTasksByDate(DateTime date)
+        {
+            var task = _context.Tasks.Where(task => task.Data.Equals(date));
+
+            return Ok(task);
+        }
+
+
         [HttpPut("{id}")]
         public IActionResult UpdateTask(int id, TaskItem task)
         {
             
             if(_context.Tasks.Find(id) == null) return NotFound("Task not found");
+
+            if (task.Data == DateTime.MinValue) 
+                return BadRequest(new { Erro = "A data da tarefa não pode ser vazia" })
+            ;
 
             TaskItem taskFromDB = _context.Tasks.Find(id);
 
@@ -56,7 +94,7 @@ namespace TaskManager.Controllers
 
             _context.Tasks.Remove(_context.Tasks.Find(id));
             _context.SaveChanges();
-            
+
             return NoContent();
         }
     }
