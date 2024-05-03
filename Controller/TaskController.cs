@@ -7,22 +7,22 @@ namespace TaskManager.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class TaskController(ITask repository) : ControllerBase
+    public class TaskController(ITaskService service) : ControllerBase
     {
-        private readonly ITask _repository = repository;
+        private readonly ITaskService _service = service;
 
         [HttpPost]
         public async Task<ActionResult> CreateTask([FromBody] TaskRequestDto dto, CancellationToken token)
         {
-            TaskItem task = await _repository.CreateTask(dto, token);
+            await _service.CreateTask(dto, token);
 
-            return Ok(task);
+            return Created();
         }
 
         [HttpGet]
         public async Task<ActionResult> GetAllTasks(CancellationToken token)
         {
-            List<TaskItem> tasks =  await _repository.GetAllTasks(token);
+            List<TaskResponseDto> tasks =  await _service.GetAllTasks(token);
 
             return Ok(tasks);
         }
@@ -30,7 +30,7 @@ namespace TaskManager.Controller
         [HttpGet("{id:guid}")]
         public async Task<ActionResult> GetoneTask(Guid id, CancellationToken token)
         {
-            TaskItem? taskSelectedById = await _repository.GetOneTask(id, token);
+            TaskResponseDto? taskSelectedById = await _service.GetOneTask(id, token);
 
             return Ok(taskSelectedById);
         }
@@ -38,17 +38,16 @@ namespace TaskManager.Controller
         [HttpPatch("{id:guid}")]
         public async Task<ActionResult> UpdateTask(Guid id, [FromBody] TaskRequestDto dto, CancellationToken token)
         {
-            TaskItem? task = await _repository.UpdateTask(dto, id, token);
-
-            return Ok(task);
+            bool taskIsFound = await _service.UpdateTask(id, dto,  token);
+            
+            return Ok(taskIsFound);
         }
 
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult> DeleteTask(Guid id, CancellationToken token)
         {
-            TaskItem? task = await _repository.DeleteTask(id, token);
-            
-            return Ok(task);
+            await _service.DeleteTask(id, token);
+            return NoContent();
         }
     }
 }

@@ -6,7 +6,7 @@ using TaskManager.Model;
 
 namespace TaskManager.Repository
 {
-    public class TaskRepository(TaskManagerContext database) : ITask
+    public class TaskRepository(TaskManagerContext database) : ITaskRepository
     {
         private readonly TaskManagerContext _database = database;
 
@@ -55,6 +55,13 @@ namespace TaskManager.Repository
             taskIsFound?.UpdateTask(dto.Nome, dto.Telefone);
 
             await _database.SaveChangesAsync(token);
+
+            return taskIsFound;
+        }
+
+        public async Task<TaskItem?> GetOneTaskByPhone(string tel, CancellationToken token)
+        {
+            TaskItem? taskIsFound = await  _database.Tasks.SingleOrDefaultAsync(entity => entity.Telefone == tel, token);
 
             return taskIsFound;
         }

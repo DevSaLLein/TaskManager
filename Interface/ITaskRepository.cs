@@ -3,7 +3,7 @@ using TaskManager.Model;
 
 namespace TaskManager.Interface
 {
-    public interface ITask
+    public interface ITaskRepository
     {
         Task<TaskItem> CreateTask(TaskRequestDto dto, CancellationToken token);
 
@@ -14,5 +14,6 @@ namespace TaskManager.Interface
         Task<List<TaskItem>> GetAllTasks(CancellationToken token);
 
         Task<TaskItem?> GetOneTask(Guid Id, CancellationToken token);
+        Task<TaskItem?> GetOneTaskByPhone(string tel, CancellationToken token);
     }
 }

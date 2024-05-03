@@ -4,7 +4,7 @@ namespace TaskManager.Model
 {
     public class TaskItem(string nome, string telefone)
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; init; }
         public string Nome { get; private set; } = nome;
         public string Telefone { get; private set; } = telefone;
         public StatusEnum Status { get; private set; } = StatusEnum.Pendente;
