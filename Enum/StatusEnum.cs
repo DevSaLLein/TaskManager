@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace TaskManager.Enums
+namespace TaskManager.Enum
 {
     public enum StatusEnum
     {
