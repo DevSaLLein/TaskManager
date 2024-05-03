@@ -12,18 +12,25 @@ namespace TaskManager.Service
         {
             TaskItem? task = await _repository.GetOneTaskByPhone(dto.Telefone, token);
 
-            if(task != null) throw new Exception("Tarefa com o telefone já cadastrado");
+            if(task == null) 
+            {
+                await _repository.CreateTask(dto, token);
+                return true;
+            }
 
-            return true;
+            return false;
         }
 
         public async Task<bool> UpdateTask(Guid id, TaskRequestDto dto, CancellationToken token)
         {
             TaskItem? task = await _repository.UpdateTask(dto, id, token);
 
-            if(task == null) throw new Exception("Tarefa not found");
+            if(task != null) 
+            {
+                return true;
+            }
 
-            return true;
+            return false;
         }
 
         public async Task<List<TaskResponseDto>> GetAllTasks(CancellationToken token)
@@ -45,23 +52,27 @@ namespace TaskManager.Service
         public async Task<TaskResponseDto> GetOneTask(Guid id, CancellationToken token)
         {
             TaskItem? task = await _repository.GetOneTask(id, token);
+            
+            if(task != null)
+            {
+                TaskResponseDto taskDto = new TaskResponseDto(task.Nome, task.Telefone, task.Status, task.Data);
+                return taskDto;
+            }
 
-            if(task == null) throw new Exception("Tarefa not found");
-
-            TaskResponseDto taskDto = new TaskResponseDto(task.Nome, task.Telefone, task.Status, task.Data);
-
-            return taskDto;
+            return null;
         }
 
         public async Task<bool> DeleteTask(Guid id, CancellationToken token)
         {
             TaskItem? task = await _repository.GetOneTask(id, token);
 
-            if(task == null) throw new Exception();
+            if(task != null) 
+            {
+                await _repository.DeleteTask(id, token);
+                return true;
+            }
 
-            await _repository.DeleteTask(id, token);
-            
-            return true;
+            return false;
         }
     }
 }
