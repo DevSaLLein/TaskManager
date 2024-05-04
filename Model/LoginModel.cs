@@ -1,0 +1,8 @@
+namespace TaskManager.Model
+{
+    public class LoginModel
+    {
+        public string? Login { get; set; }
+        public string? Senha { get; set; }
+    }
+}
