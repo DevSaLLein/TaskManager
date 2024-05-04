@@ -77,16 +77,14 @@ namespace TaskManager.Service
 
             foreach(TaskItem task in tasks)
             {
-                var userDto = new 
-                {
-                    task.Login.Id,
-                    task.Login.Login,
-                };
+                UserResponseDto User = new UserResponseDto(task.IdLogin, task.Login.Login, task.Login.Token);  
+                string UserJson = JsonConvert.SerializeObject(User, Formatting.Indented); 
 
                 TaskOrdedByUserResponse dto = new TaskOrdedByUserResponse (
-                    task.Nome, Enum.StatusEnum.Pendente, 
+                    task.Nome, 
+                    Enum.StatusEnum.Pendente, 
                     task.Data, 
-                    JsonConvert.SerializeObject(userDto, Formatting.Indented)
+                    UserJson
                 );
 
                 listDto.Add(dto);
