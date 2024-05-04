@@ -1,31 +1,39 @@
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using TaskManager.Context;
+using TaskManager.DTO;
 using TaskManager.Model;
 
 namespace TaskManager.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class LoginController : ControllerBase
+    public class LoginController(TaskManagerContext database) : ControllerBase
     {
         private readonly string key = "0cbd2ce1-1f06-49f4-a693-0ae2f767db85";
 
+        private readonly TaskManagerContext _database = database;
+
         [HttpPost]
-        public IActionResult Logar([FromBody] LoginModel login)
+        public IActionResult Sign([FromBody] SignDto dto)
         {
             try
             {
-                if (login.Login == "admin" && login.Senha == "admin")
-                {
-                    var token = GenerateTokenJWT();
-                    return Ok(new { token });
-                }
+                var loginAlreadyExist = _database.Login.Where(login => login.Login == dto.Login);
 
-                return BadRequest(new { mensage = "Credenciais inválidas" });
+                if(!loginAlreadyExist.IsNullOrEmpty()) return Conflict("Usuário já cadastrado");
+
+                var token = GenerateTokenJWT();
+
+                LoginModel newLogin = new LoginModel(dto.Login, dto.Password, token);
+                
+                _database.Login.Add(newLogin);
+                _database.SaveChanges();
+
+                return Ok(new { mensage = "Usuário cadastrado com sucesso", token });
             }
             catch (Exception ex)
             {
