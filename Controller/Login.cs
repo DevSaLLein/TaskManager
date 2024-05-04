@@ -26,7 +26,7 @@ namespace TaskManager.Controller
 
                 if(!loginAlreadyExist.IsNullOrEmpty()) return Conflict("Usuário já cadastrado");
 
-                var token = GenerateTokenJWT();
+                var token = GenerateTokenJWT(dto.Login);
 
                 LoginModel newLogin = new LoginModel(dto.Login, dto.Password, token);
                 
@@ -42,15 +42,14 @@ namespace TaskManager.Controller
             }
         }
 
-        private string GenerateTokenJWT()
+        private string GenerateTokenJWT(string login)
         {
             var chave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
             var credential = new SigningCredentials(chave, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
             {
-                new Claim("login", "admin"),
-                new Claim("email", "admin@gmail.com")
+                new Claim("login", login),
             };
 
             var token = new JwtSecurityToken(
