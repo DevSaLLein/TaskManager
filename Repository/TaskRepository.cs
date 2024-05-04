@@ -12,7 +12,7 @@ namespace TaskManager.Repository
 
         public async Task<TaskItem> CreateTask(TaskRequestDto dto, CancellationToken token)
         {
-            TaskItem task = new TaskItem(dto.Nome, dto.Telefone);
+            TaskItem task = new TaskItem(dto.Nome);
 
             await _database.AddAsync(task, token);
             await _database.SaveChangesAsync(token);
@@ -48,20 +48,23 @@ namespace TaskManager.Repository
             return taskIsFound;
         }
 
+        public async Task<List<TaskItem>> GetTaskItemsByUser(Guid IdUser, CancellationToken token)
+        {
+            var tasks = await _database.Tasks
+                .Include(task => task.Login)
+                .ToListAsync(token)
+            ;
+
+            return tasks;
+        }
+
         public async Task<TaskItem?> UpdateTask(TaskRequestDto dto, Guid Id, CancellationToken token)
         {
             var taskIsFound = await GetOneTask(Id, token);
             
-            taskIsFound?.UpdateTask(dto.Nome, dto.Telefone);
+            taskIsFound?.UpdateTask(dto.Nome);
 
             await _database.SaveChangesAsync(token);
-
-            return taskIsFound;
-        }
-
-        public async Task<TaskItem?> GetOneTaskByPhone(string tel, CancellationToken token)
-        {
-            TaskItem? taskIsFound = await  _database.Tasks.SingleOrDefaultAsync(entity => entity.Telefone == tel, token);
 
             return taskIsFound;
         }

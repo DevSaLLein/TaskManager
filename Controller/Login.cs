@@ -53,9 +53,9 @@ namespace TaskManager.Controller
             };
 
             var token = new JwtSecurityToken(
-                issuer: "",
-                audience: "",
-                claims: claims,
+                issuer: "devsallein",
+                audience: "application",
+                claims: claims, 
                 expires: DateTime.Now.AddHours(2),
                 signingCredentials: credential
             );

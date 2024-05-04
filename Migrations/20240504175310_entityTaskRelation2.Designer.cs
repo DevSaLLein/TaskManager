@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TaskManager.Context;
@@ -11,9 +12,11 @@ using TaskManager.Context;
 namespace TaskManager.Migrations
 {
     [DbContext(typeof(TaskManagerContext))]
-    partial class TaskManagerContextModelSnapshot : ModelSnapshot
+    [Migration("20240504175310_entityTaskRelation2")]
+    partial class entityTaskRelation2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,13 +53,12 @@ namespace TaskManager.Migrations
             modelBuilder.Entity("TaskManager.Model.TaskItem", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("Data")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("IdLogin")
+                    b.Property<Guid>("LoginId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Nome")
@@ -69,8 +71,6 @@ namespace TaskManager.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdLogin");
-
                     b.ToTable("Tasks");
                 });
 
@@ -78,7 +78,9 @@ namespace TaskManager.Migrations
                 {
                     b.HasOne("TaskManager.Model.LoginModel", "Login")
                         .WithMany("Tasks")
-                        .HasForeignKey("IdLogin");
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Login");
                 });

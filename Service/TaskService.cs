@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using TaskManager.DTO;
 using TaskManager.Interface;
 using TaskManager.Model;
@@ -10,15 +11,8 @@ namespace TaskManager.Service
 
         public async Task<bool> CreateTask(TaskRequestDto dto, CancellationToken token)
         {
-            TaskItem? task = await _repository.GetOneTaskByPhone(dto.Telefone, token);
-
-            if(task == null) 
-            {
-                await _repository.CreateTask(dto, token);
-                return true;
-            }
-
-            return false;
+            await _repository.CreateTask(dto, token);
+            return true;
         }
 
         public async Task<bool> UpdateTask(Guid id, TaskRequestDto dto, CancellationToken token)
@@ -41,7 +35,7 @@ namespace TaskManager.Service
 
             foreach(TaskItem taskItem in tasks)
             {
-                TaskResponseDto taskReponse = new TaskResponseDto(taskItem.Nome, taskItem.Telefone, taskItem.Status, taskItem.Data);
+                TaskResponseDto taskReponse = new TaskResponseDto(taskItem.Nome, taskItem.Status, taskItem.Data, taskItem.IdLogin);
 
                 listResponse.Add(taskReponse);
             }
@@ -55,7 +49,7 @@ namespace TaskManager.Service
             
             if(task != null)
             {
-                TaskResponseDto taskDto = new TaskResponseDto(task.Nome, task.Telefone, task.Status, task.Data);
+                TaskResponseDto taskDto = new TaskResponseDto(task.Nome, task.Status, task.Data, task.IdLogin);
                 return taskDto;
             }
 
@@ -73,6 +67,32 @@ namespace TaskManager.Service
             }
 
             return false;
+        }
+
+        public async Task<List<TaskOrdedByUserResponse>> GetAllTasksByUserResponse(Guid idUser, CancellationToken token)
+        {
+            List<TaskItem> tasks = await _repository.GetTaskItemsByUser(idUser, token);
+
+            List<TaskOrdedByUserResponse> listDto = new List<TaskOrdedByUserResponse>();
+
+            foreach(TaskItem task in tasks)
+            {
+                var userDto = new 
+                {
+                    task.Login.Id,
+                    task.Login.Login,
+                };
+
+                TaskOrdedByUserResponse dto = new TaskOrdedByUserResponse (
+                    task.Nome, Enum.StatusEnum.Pendente, 
+                    task.Data, 
+                    JsonConvert.SerializeObject(userDto, Formatting.Indented)
+                );
+
+                listDto.Add(dto);
+            }
+
+            return  listDto;
         }
     }
 }

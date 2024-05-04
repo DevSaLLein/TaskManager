@@ -14,6 +14,9 @@ namespace TaskManager.Interface
         Task<List<TaskItem>> GetAllTasks(CancellationToken token);
 
         Task<TaskItem?> GetOneTask(Guid Id, CancellationToken token);
-        Task<TaskItem?> GetOneTaskByPhone(string tel, CancellationToken token);
+
+        // By User
+
+        Task<List<TaskItem>> GetTaskItemsByUser(Guid IdUser, CancellationToken token);
     }
 }

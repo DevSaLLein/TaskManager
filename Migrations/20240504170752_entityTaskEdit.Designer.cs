@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TaskManager.Context;
@@ -11,9 +12,11 @@ using TaskManager.Context;
 namespace TaskManager.Migrations
 {
     [DbContext(typeof(TaskManagerContext))]
-    partial class TaskManagerContextModelSnapshot : ModelSnapshot
+    [Migration("20240504170752_entityTaskEdit")]
+    partial class entityTaskEdit
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,7 +59,7 @@ namespace TaskManager.Migrations
                     b.Property<DateTime>("Data")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("IdLogin")
+                    b.Property<Guid>("IdUser")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Nome")
@@ -69,23 +72,7 @@ namespace TaskManager.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdLogin");
-
                     b.ToTable("Tasks");
-                });
-
-            modelBuilder.Entity("TaskManager.Model.TaskItem", b =>
-                {
-                    b.HasOne("TaskManager.Model.LoginModel", "Login")
-                        .WithMany("Tasks")
-                        .HasForeignKey("IdLogin");
-
-                    b.Navigation("Login");
-                });
-
-            modelBuilder.Entity("TaskManager.Model.LoginModel", b =>
-                {
-                    b.Navigation("Tasks");
                 });
 #pragma warning restore 612, 618
         }

@@ -30,6 +30,14 @@ namespace TaskManager.Controller
             return Ok(tasks);
         }
 
+        [HttpGet("/porUser/{id:guid}")]
+        public async Task<ActionResult> GetAllTasksByUser(Guid id, CancellationToken token)
+        {
+            var tasks = await _service.GetAllTasksByUserResponse(id, token);
+
+            return Ok(tasks);
+        }
+
         [HttpGet("{id:guid}")]
         public async Task<ActionResult> GetoneTask(Guid id, CancellationToken token)
         {

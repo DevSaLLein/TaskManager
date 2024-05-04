@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TaskManager.Context;
@@ -11,9 +12,11 @@ using TaskManager.Context;
 namespace TaskManager.Migrations
 {
     [DbContext(typeof(TaskManagerContext))]
-    partial class TaskManagerContextModelSnapshot : ModelSnapshot
+    [Migration("20240504174236_entityTaskRelation")]
+    partial class entityTaskRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,7 +28,6 @@ namespace TaskManager.Migrations
             modelBuilder.Entity("TaskManager.Model.LoginModel", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Login")
@@ -56,7 +58,7 @@ namespace TaskManager.Migrations
                     b.Property<DateTime>("Data")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("IdLogin")
+                    b.Property<Guid>("LoginId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Nome")
@@ -69,23 +71,21 @@ namespace TaskManager.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdLogin");
-
                     b.ToTable("Tasks");
-                });
-
-            modelBuilder.Entity("TaskManager.Model.TaskItem", b =>
-                {
-                    b.HasOne("TaskManager.Model.LoginModel", "Login")
-                        .WithMany("Tasks")
-                        .HasForeignKey("IdLogin");
-
-                    b.Navigation("Login");
                 });
 
             modelBuilder.Entity("TaskManager.Model.LoginModel", b =>
                 {
-                    b.Navigation("Tasks");
+                    b.HasOne("TaskManager.Model.TaskItem", null)
+                        .WithOne("Login")
+                        .HasForeignKey("TaskManager.Model.LoginModel", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TaskManager.Model.TaskItem", b =>
+                {
+                    b.Navigation("Login");
                 });
 #pragma warning restore 612, 618
         }
