@@ -19,16 +19,18 @@ namespace TaskManager.Controller
         [HttpPost]
         public IActionResult SignUp([FromBody] SignDto Dto)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
             try
             {
-                var LoginAlreadyExist = _database.Usuarios.Where(Entity => Entity.Login == Dto.Login);
-
-                if(!LoginAlreadyExist.IsNullOrEmpty()) return Conflict("Usuário já cadastrado");
-
                 var Token = GenerateTokenJWT(Dto.Login);
 
+                var LoginAlreadyExist = _database.Usuarios.Where(Entity => Entity.Login == Dto.Login);
+
+                if (!LoginAlreadyExist.IsNullOrEmpty()) return Conflict("Usuário já cadastrado");
+
                 UsuárioModel NewLogin = new UsuárioModel(Dto.Login, Dto.Password, Token);
-                
+
                 _database.Usuarios.Add(NewLogin);
                 _database.SaveChanges();
 

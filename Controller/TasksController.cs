@@ -12,8 +12,6 @@ namespace TaskManager.Controller
         private readonly ITaskService _service = Service;
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> CreateTask([FromBody] TaskRequestDto Dto, CancellationToken Token)
         {
             var GuidFromTask = await _service.CreateTask(Dto, Token);
@@ -30,8 +28,6 @@ namespace TaskManager.Controller
         }
 
         [HttpGet("/byUser/{Id:guid}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> GetAllTasksByUser([FromRoute] Guid Id, CancellationToken Token)
         {
             var TasksByUser = await _service.GetAllTasksByUserResponse(Id, Token);
@@ -40,8 +36,6 @@ namespace TaskManager.Controller
         }
 
         [HttpGet("{id:guid}")]
-        [ProducesResponseType(StatusCodes.Status302Found)]
-        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<ActionResult> GetOneTask([FromRoute] Guid Id, CancellationToken Token)
         {
             TaskResponseDto TaskSelectedById = await _service.GetOneTask(Id, Token);
@@ -51,11 +45,11 @@ namespace TaskManager.Controller
             return NotFound("Tarefa não encontrada");
         }
 
-        [HttpPatch("{id:guid}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status304NotModified)]
+        [HttpPut("{id:guid}")]
         public async Task<ActionResult> UpdateTask([FromRoute] Guid Id, [FromBody] TaskRequestDto Dto, CancellationToken Token)
         {
+            if(!ModelState.IsValid) return BadRequest(ModelState);
+
             bool TaskIsFound = await _service.UpdateTask(Id, Dto, Token);
 
             if(TaskIsFound) return NoContent();
@@ -63,9 +57,7 @@ namespace TaskManager.Controller
             return NotFound("Tarefa não encontrada");
         }
 
-        [HttpDelete("{id:guid}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [HttpDelete("{id:guid}")]        
         public async Task<ActionResult> DeleteTask([FromRoute] Guid Id, CancellationToken Token)
         {
             bool TaskIsFound = await _service.DeleteTask(Id, Token);

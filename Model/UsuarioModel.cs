@@ -6,10 +6,8 @@ namespace TaskManager.Model
     {
         public Guid Id { get; init; }
 
-        [Required]
         public string Login { get; set; } = login;
 
-        [Required]
         public string Senha { get; set; } = senha;
 
         public string Token { get; set; } = token;

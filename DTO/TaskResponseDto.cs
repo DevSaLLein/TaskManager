@@ -6,5 +6,5 @@ namespace TaskManager.DTO
         string Nome, 
         StatusEnum Status,
         DateTime Data
-    ){ }
+    ) { }
 }
