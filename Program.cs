@@ -1,8 +1,10 @@
+using System.Security.Cryptography.Xml;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using TaskManager.Context;
 using TaskManager.Interface;
 using TaskManager.Repository;
@@ -19,7 +21,7 @@ builder.Services.AddDbContext<TaskManagerContext> (
 );
 
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
-builder.Services.AddScoped<ITaskService, TaskService>();     
+builder.Services.AddScoped<ITaskService, TaskService>();    
 
 // builder.Services.AddMvc(options => options.Filters.Add(typeof(IExceptionFilter)));
 
@@ -59,7 +61,11 @@ builder.Services.AddSwaggerGen(swagger =>
     );
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(options => {
+        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+    }
+);
 
 builder.Services.AddAuthentication(
     options => {

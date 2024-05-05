@@ -17,6 +17,6 @@ namespace TaskManager.Interface
 
         // By User
 
-        Task<List<TaskItem>> GetTaskItemsByUser(Guid IdUser, CancellationToken token);
+        Task<UsuárioModel> GetTaskItemsByUser(Guid IdUser, CancellationToken token);
     }
 }

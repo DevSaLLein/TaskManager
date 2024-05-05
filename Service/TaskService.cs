@@ -69,28 +69,14 @@ namespace TaskManager.Service
             return false;
         }
 
-        public async Task<List<TaskOrdedByUserResponse>> GetAllTasksByUserResponse(Guid idUser, CancellationToken token)
+        public async Task<UserResponseDto> GetAllTasksByUserResponse(Guid idUser, CancellationToken token)
         {
-            List<TaskItem> tasks = await _repository.GetTaskItemsByUser(idUser, token);
+            UsuárioModel login = await _repository.GetTaskItemsByUser(idUser, token);
 
-            List<TaskOrdedByUserResponse> listDto = new List<TaskOrdedByUserResponse>();
 
-            foreach(TaskItem task in tasks)
-            {
-                UserResponseDto User = new UserResponseDto(task.IdLogin, task.Login.Login, task.Login.Token);  
-                string UserJson = JsonConvert.SerializeObject(User, Formatting.Indented); 
+            UserResponseDto User = new UserResponseDto(login.Id, login.Login, login.Tasks);  
 
-                TaskOrdedByUserResponse dto = new TaskOrdedByUserResponse (
-                    task.Nome, 
-                    Enum.StatusEnum.Pendente, 
-                    task.Data, 
-                    UserJson
-                );
-
-                listDto.Add(dto);
-            }
-
-            return  listDto;
+            return User;
         }
     }
 }

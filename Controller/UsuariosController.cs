@@ -11,25 +11,25 @@ namespace TaskManager.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class LoginController(TaskManagerContext database, IConfiguration configuration) : ControllerBase
+    public class UsuariosController(TaskManagerContext database, IConfiguration configuration) : ControllerBase
     {
         private readonly IConfiguration _configuration = configuration;        
         private readonly TaskManagerContext _database = database;
 
         [HttpPost]
-        public IActionResult Sign([FromBody] SignDto dto)
+        public IActionResult SignUp([FromBody] SignDto dto)
         {
             try
             {
-                var loginAlreadyExist = _database.Login.Where(login => login.Login == dto.Login);
+                var loginAlreadyExist = _database.Usuarios.Where(login => login.Login == dto.Login);
 
                 if(!loginAlreadyExist.IsNullOrEmpty()) return Conflict("Usuário já cadastrado");
 
                 var token = GenerateTokenJWT(dto.Login);
 
-                LoginModel newLogin = new LoginModel(dto.Login, dto.Password, token);
+                UsuárioModel newLogin = new UsuárioModel(dto.Login, dto.Password, token);
                 
-                _database.Login.Add(newLogin);
+                _database.Usuarios.Add(newLogin);
                 _database.SaveChanges();
 
                 return Ok(new { mensage = "Usuário cadastrado com sucesso", token });

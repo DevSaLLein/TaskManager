@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TaskManager.Model
 {
-    public class LoginModel
+    public class UsuárioModel
     {
         public Guid Id { get; init; }
 
@@ -19,7 +16,7 @@ namespace TaskManager.Model
 
         public virtual ICollection<TaskItem> Tasks { get; set; }
 
-        public LoginModel(string login, string senha, string token)
+        public UsuárioModel(string login, string senha, string token)
         {
             Login = login;
             Senha = senha;

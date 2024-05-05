@@ -7,7 +7,7 @@ namespace TaskManager.Context
     public class TaskManagerContext(DbContextOptions<TaskManagerContext> options) : DbContext(options)
     {
         public DbSet<TaskItem> Tasks { get; set; }
-        public DbSet<LoginModel> Login { get; set; }
+        public DbSet<UsuárioModel> Usuarios { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

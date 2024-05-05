@@ -5,10 +5,10 @@ using TaskManager.Model;
 namespace TaskManager.Context.Map
 {
     
-    public class LoginMap : IEntityTypeConfiguration<LoginModel>
+    public class LoginMap : IEntityTypeConfiguration<UsuárioModel>
     {
 
-        public void Configure(EntityTypeBuilder<LoginModel> builder)
+        public void Configure(EntityTypeBuilder<UsuárioModel> builder)
         {
             builder.HasKey(entity => entity.Id);
             builder.Property(entity => entity.Login).IsRequired().HasMaxLength(255);

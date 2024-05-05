@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using TaskManager.Enum;
 
 namespace TaskManager.Model
@@ -20,7 +21,8 @@ namespace TaskManager.Model
         public Guid IdLogin { get; set; }
 
         [ForeignKey("IdLogin")]
-        public virtual LoginModel Login { get; set; }
+        [JsonIgnore]
+        public virtual UsuárioModel Login { get; set; }
 
         public TaskItem(string nome, Guid idLogin)
         {

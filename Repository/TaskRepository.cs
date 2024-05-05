@@ -48,14 +48,14 @@ namespace TaskManager.Repository
             return taskIsFound;
         }
 
-        public async Task<List<TaskItem>> GetTaskItemsByUser(Guid IdUser, CancellationToken token)
+        public async Task<UsuárioModel> GetTaskItemsByUser(Guid IdUser, CancellationToken token)
         {
-            var tasks = await _database.Tasks
-                .Include(task => task.Login)
-                .ToListAsync(token)
+            var login = await _database.Usuarios
+                .Include(Login => Login.Tasks)
+                .SingleOrDefaultAsync(Login => Login.Id == IdUser, cancellationToken: token) 
             ;
 
-            return tasks;
+            return login;
         }
 
         public async Task<TaskItem?> UpdateTask(TaskRequestDto dto, Guid Id, CancellationToken token)

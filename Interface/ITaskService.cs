@@ -12,6 +12,6 @@ namespace TaskManager.Interface
 
         // By user
 
-        Task<List<TaskOrdedByUserResponse>> GetAllTasksByUserResponse(Guid idUser, CancellationToken token);
+        Task<UserResponseDto> GetAllTasksByUserResponse(Guid idUser, CancellationToken token);
     }
 }
