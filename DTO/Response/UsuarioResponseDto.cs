@@ -2,7 +2,8 @@ using TaskManager.Model;
 
 namespace TaskManager.DTO
 {
-    public record UserResponseDto(
+    public record UsuarioResponseDto
+    (
         Guid IdUser, 
         string Login, 
         ICollection<TaskItem> Tasks

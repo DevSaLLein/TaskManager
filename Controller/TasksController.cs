@@ -1,9 +1,9 @@
-    using Microsoft.AspNetCore.Mvc;
-    using TaskManager.DTO;
-    using TaskManager.Helpers;
-    using TaskManager.Interface;
+using Microsoft.AspNetCore.Mvc;    
+using TaskManager.Helpers;
+using TaskManager.Interface;
+using TaskManager.DTO;
 
-    namespace TaskManager.Controller
+namespace TaskManager.Controller
     {
         // [Authorize]
         [ApiController]
@@ -13,7 +13,7 @@
             private readonly ITaskService _service = Service;
 
             [HttpPost]
-            public async Task<ActionResult> CreateTask([FromBody] TaskRequestDto Dto, CancellationToken Token)
+            public async Task<ActionResult> CreateTask([FromBody] TaskCreateRequestDto Dto, CancellationToken Token)
             {
                 var GuidFromTask = await _service.CreateTask(Dto, Token);
 
@@ -36,7 +36,7 @@
                 return Ok(TasksByUser);
             }
 
-            [HttpGet("{id:guid}")]
+            [HttpGet("{Id:guid}")]
             public async Task<ActionResult> GetOneTask([FromRoute] Guid Id, CancellationToken Token)
             {
                 TaskResponseDto TaskSelectedById = await _service.GetOneTask(Id, Token);
@@ -46,8 +46,8 @@
                 return NotFound("Tarefa não encontrada");
             }
 
-            [HttpPut("{id:guid}")]
-            public async Task<ActionResult> UpdateTask([FromRoute] Guid Id, [FromBody] TaskRequestDto Dto, CancellationToken Token)
+            [HttpPut("/{Id:guid}")]
+            public async Task<ActionResult> UpdateTask([FromRoute] Guid Id, [FromBody] TaskUpdateRequestDto Dto, CancellationToken Token)
             {
                 if(!ModelState.IsValid) return BadRequest(ModelState);
 
@@ -58,7 +58,7 @@
                 return NotFound("Tarefa não encontrada");
             }
 
-            [HttpDelete("{id:guid}")]        
+            [HttpDelete("/{Id:guid}")]        
             public async Task<ActionResult> DeleteTask([FromRoute] Guid Id, CancellationToken Token)
             {
                 bool TaskIsFound = await _service.DeleteTask(Id, Token);

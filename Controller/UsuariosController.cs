@@ -17,7 +17,7 @@ namespace TaskManager.Controller
         private readonly TaskManagerContext _database = Database;
 
         [HttpPost]
-        public IActionResult SignUp([FromBody] SignDto Dto)
+        public IActionResult SignUp([FromBody] UsuarioCreateRequestDto Dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 

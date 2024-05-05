@@ -1,13 +1,13 @@
-using TaskManager.DTO;
 using TaskManager.Helpers;
+using TaskManager.DTO;
 
 namespace TaskManager.Interface
 {
     public interface ITaskService
     {
-        Task<Guid> CreateTask(TaskRequestDto Dto, CancellationToken Token);
+        Task<Guid> CreateTask(TaskCreateRequestDto Dto, CancellationToken Token);
 
-        Task<bool> UpdateTask(Guid Id, TaskRequestDto Dto, CancellationToken Token);       
+        Task<bool> UpdateTask(Guid Id, TaskUpdateRequestDto Dto, CancellationToken Token);       
 
         Task<List<TaskResponseDto>> GetAllTasks(QueryObjectFilter Filter, CancellationToken Token);
 
@@ -17,6 +17,6 @@ namespace TaskManager.Interface
 
         // By user
 
-        Task<UserResponseDto> GetAllTasksByUserResponse(QueryObjectFilter Filter, Guid IdUser, CancellationToken Token);
+        Task<UsuarioResponseDto> GetAllTasksByUserResponse(QueryObjectFilter Filter, Guid IdUser, CancellationToken Token);
     }
 }

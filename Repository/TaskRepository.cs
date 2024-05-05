@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using TaskManager.Context;
-using TaskManager.DTO;
 using TaskManager.Helpers;
 using TaskManager.Interface;
 using TaskManager.Model;
+using TaskManager.DTO;
 
 namespace TaskManager.Repository
 {
@@ -11,7 +11,7 @@ namespace TaskManager.Repository
     {
         private readonly TaskManagerContext _database = Database;
 
-        public async Task<TaskItem> CreateTask(TaskRequestDto Dto, CancellationToken Token)
+        public async Task<TaskItem> CreateTask(TaskCreateRequestDto Dto, CancellationToken Token)
         {
             TaskItem Task = new TaskItem(Dto.Nome, Dto.IdUser);
 
@@ -40,9 +40,8 @@ namespace TaskManager.Repository
             var Tasks = _database.Tasks.AsQueryable();
 
             if(Filter.Status != null)
-            {
-                Tasks = Tasks.Where(Entity => Entity.Status == Filter.Status);
-            }
+                Tasks = Tasks.Where(Entity => Entity.Status == Filter.Status)
+            ;
 
             return await Tasks.ToListAsync(Token);
         }
@@ -67,14 +66,13 @@ namespace TaskManager.Repository
             var UserWithYoursTasks = await Query.SingleOrDefaultAsync(Token);
 
             if(Filter.Status != null)
-            {
-                UserWithYoursTasks.Tasks = UserWithYoursTasks.Tasks.Where(task => task.Status == Filter.Status).ToList();
-            }
+                UserWithYoursTasks.Tasks = UserWithYoursTasks.Tasks.Where(task => task.Status == Filter.Status).ToList()
+            ;
 
             return UserWithYoursTasks;
         }
 
-        public async Task<TaskItem> UpdateTask(TaskRequestDto dto, Guid Id, CancellationToken Token)
+        public async Task<TaskItem> UpdateTask(TaskUpdateRequestDto dto, Guid Id, CancellationToken Token)
         {
             var TaskIsFound = await GetOneTask(Id, Token);
             

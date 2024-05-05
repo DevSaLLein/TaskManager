@@ -1,7 +1,7 @@
-using TaskManager.DTO;
 using TaskManager.Helpers;
 using TaskManager.Interface;
 using TaskManager.Model;
+using TaskManager.DTO;
 
 namespace TaskManager.Service
 {
@@ -9,13 +9,13 @@ namespace TaskManager.Service
     {
         private readonly ITaskRepository _repository = repository;
 
-        public async Task<Guid> CreateTask(TaskRequestDto dto, CancellationToken token)
+        public async Task<Guid> CreateTask(TaskCreateRequestDto dto, CancellationToken token)
         {
             var Task = await _repository.CreateTask(dto, token);
             return Task.Id;
         }
 
-        public async Task<bool> UpdateTask(Guid id, TaskRequestDto dto, CancellationToken token)
+        public async Task<bool> UpdateTask(Guid id, TaskUpdateRequestDto dto, CancellationToken token)
         {
             TaskItem Task = await _repository.UpdateTask(dto, id, token);
 
@@ -69,7 +69,7 @@ namespace TaskManager.Service
             return false;
         }
 
-        public async Task<UserResponseDto> GetAllTasksByUserResponse(QueryObjectFilter Filter, Guid idUser, CancellationToken token)
+        public async Task<UsuarioResponseDto> GetAllTasksByUserResponse(QueryObjectFilter Filter, Guid idUser, CancellationToken token)
         {
             UsuárioModel TasksByUser = await _repository.GetTaskItemsByUser(Filter, idUser, token);
 
@@ -78,7 +78,8 @@ namespace TaskManager.Service
                 throw new Exception("Não há tasks para esse usuário nesse status");
             }
 
-            UserResponseDto UserWithYoursTasksResponse = new UserResponseDto(
+            UsuarioResponseDto UserWithYoursTasksResponse = new UsuarioResponseDto
+            (
                 TasksByUser.Id, 
                 TasksByUser.Login, 
                 TasksByUser.Tasks

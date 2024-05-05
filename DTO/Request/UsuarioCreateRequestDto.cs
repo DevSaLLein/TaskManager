@@ -2,8 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TaskManager.DTO
 {
-    public record SignDto(
-
+    public record UsuarioCreateRequestDto
+    (
         [Required]
         [MinLength(5, ErrorMessage = "Deve ter no mínimo 5 caracteres")]
         string Login, 
