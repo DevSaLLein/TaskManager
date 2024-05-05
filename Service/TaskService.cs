@@ -1,4 +1,5 @@
 using TaskManager.DTO;
+using TaskManager.Helpers;
 using TaskManager.Interface;
 using TaskManager.Model;
 
@@ -26,9 +27,9 @@ namespace TaskManager.Service
             return false;
         }
 
-        public async Task<List<TaskResponseDto>> GetAllTasks(CancellationToken token)
+        public async Task<List<TaskResponseDto>> GetAllTasks(QueryObjectFilter Filter, CancellationToken token)
         {
-            List<TaskItem> Tasks = await _repository.GetAllTasks(token);
+            List<TaskItem> Tasks = await _repository.GetAllTasks(Filter, token);
 
             List<TaskResponseDto> ListOfTasksResponse = new List<TaskResponseDto>();
 
@@ -68,9 +69,14 @@ namespace TaskManager.Service
             return false;
         }
 
-        public async Task<UserResponseDto> GetAllTasksByUserResponse(Guid idUser, CancellationToken token)
+        public async Task<UserResponseDto> GetAllTasksByUserResponse(QueryObjectFilter Filter, Guid idUser, CancellationToken token)
         {
-            UsuárioModel TasksByUser = await _repository.GetTaskItemsByUser(idUser, token);
+            UsuárioModel TasksByUser = await _repository.GetTaskItemsByUser(Filter, idUser, token);
+
+            if(TasksByUser == null)
+            {
+                throw new Exception("Não há tasks para esse usuário nesse status");
+            }
 
             UserResponseDto UserWithYoursTasksResponse = new UserResponseDto(
                 TasksByUser.Id, 

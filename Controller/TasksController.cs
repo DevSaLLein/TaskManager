@@ -1,70 +1,71 @@
-using Microsoft.AspNetCore.Mvc;
-using TaskManager.DTO;
-using TaskManager.Interface;
+    using Microsoft.AspNetCore.Mvc;
+    using TaskManager.DTO;
+    using TaskManager.Helpers;
+    using TaskManager.Interface;
 
-namespace TaskManager.Controller
-{
-    // [Authorize]
-    [ApiController]
-    [Route("api/[controller]")]
-    public class TasksController(ITaskService Service) : ControllerBase
+    namespace TaskManager.Controller
     {
-        private readonly ITaskService _service = Service;
-
-        [HttpPost]
-        public async Task<ActionResult> CreateTask([FromBody] TaskRequestDto Dto, CancellationToken Token)
+        // [Authorize]
+        [ApiController]
+        [Route("api/[controller]")]
+        public class TasksController(ITaskService Service) : ControllerBase
         {
-            var GuidFromTask = await _service.CreateTask(Dto, Token);
+            private readonly ITaskService _service = Service;
 
-            return CreatedAtAction(nameof(GetOneTask), new { Id = GuidFromTask }, Created());
-        }
+            [HttpPost]
+            public async Task<ActionResult> CreateTask([FromBody] TaskRequestDto Dto, CancellationToken Token)
+            {
+                var GuidFromTask = await _service.CreateTask(Dto, Token);
 
-        [HttpGet]
-        public async Task<ActionResult> GetAllTasks(CancellationToken Token)
-        {
-            List<TaskResponseDto> Tasks =  await _service.GetAllTasks(Token);
+                return CreatedAtAction(nameof(GetOneTask), new { Id = GuidFromTask }, Created());
+            }
 
-            return Ok(Tasks);
-        }
+            [HttpGet]
+            public async Task<ActionResult> GetAllTasks([FromQuery] QueryObjectFilter Filter, CancellationToken Token)
+            {
+                List<TaskResponseDto> Tasks =  await _service.GetAllTasks(Filter, Token);
 
-        [HttpGet("/byUser/{Id:guid}")]
-        public async Task<ActionResult> GetAllTasksByUser([FromRoute] Guid Id, CancellationToken Token)
-        {
-            var TasksByUser = await _service.GetAllTasksByUserResponse(Id, Token);
+                return Ok(Tasks);
+            }
 
-            return Ok(TasksByUser);
-        }
+            [HttpGet("/byUser/{Id:guid}")]
+            public async Task<ActionResult> GetAllTasksByUser([FromQuery] QueryObjectFilter Filter, [FromRoute] Guid Id, CancellationToken Token)
+            {
+                var TasksByUser = await _service.GetAllTasksByUserResponse(Filter, Id, Token);
 
-        [HttpGet("{id:guid}")]
-        public async Task<ActionResult> GetOneTask([FromRoute] Guid Id, CancellationToken Token)
-        {
-            TaskResponseDto TaskSelectedById = await _service.GetOneTask(Id, Token);
+                return Ok(TasksByUser);
+            }
 
-            if(TaskSelectedById != null) return Ok(TaskSelectedById);
+            [HttpGet("{id:guid}")]
+            public async Task<ActionResult> GetOneTask([FromRoute] Guid Id, CancellationToken Token)
+            {
+                TaskResponseDto TaskSelectedById = await _service.GetOneTask(Id, Token);
 
-            return NotFound("Tarefa não encontrada");
-        }
+                if(TaskSelectedById != null) return Ok(TaskSelectedById);
 
-        [HttpPut("{id:guid}")]
-        public async Task<ActionResult> UpdateTask([FromRoute] Guid Id, [FromBody] TaskRequestDto Dto, CancellationToken Token)
-        {
-            if(!ModelState.IsValid) return BadRequest(ModelState);
+                return NotFound("Tarefa não encontrada");
+            }
 
-            bool TaskIsFound = await _service.UpdateTask(Id, Dto, Token);
+            [HttpPut("{id:guid}")]
+            public async Task<ActionResult> UpdateTask([FromRoute] Guid Id, [FromBody] TaskRequestDto Dto, CancellationToken Token)
+            {
+                if(!ModelState.IsValid) return BadRequest(ModelState);
 
-            if(TaskIsFound) return NoContent();
-            
-            return NotFound("Tarefa não encontrada");
-        }
+                bool TaskIsFound = await _service.UpdateTask(Id, Dto, Token);
 
-        [HttpDelete("{id:guid}")]        
-        public async Task<ActionResult> DeleteTask([FromRoute] Guid Id, CancellationToken Token)
-        {
-            bool TaskIsFound = await _service.DeleteTask(Id, Token);
+                if(TaskIsFound) return NoContent();
+                
+                return NotFound("Tarefa não encontrada");
+            }
 
-            if(TaskIsFound) return NoContent();
+            [HttpDelete("{id:guid}")]        
+            public async Task<ActionResult> DeleteTask([FromRoute] Guid Id, CancellationToken Token)
+            {
+                bool TaskIsFound = await _service.DeleteTask(Id, Token);
 
-            return NotFound("Tarefa não encontrada");
+                if(TaskIsFound) return NoContent();
+
+                return NotFound("Tarefa não encontrada");
+            }
         }
     }
-}

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TaskManager.Context;
 using TaskManager.DTO;
+using TaskManager.Helpers;
 using TaskManager.Interface;
 using TaskManager.Model;
 
@@ -34,9 +35,16 @@ namespace TaskManager.Repository
             return TaskIsFound;
         }
         
-        public async Task<List<TaskItem>> GetAllTasks(CancellationToken Token)
+        public async Task<List<TaskItem>> GetAllTasks(QueryObjectFilter Filter, CancellationToken Token)
         {
-            return await _database.Tasks.ToListAsync(Token);
+            var Tasks = _database.Tasks.AsQueryable();
+
+            if(Filter.Status != null)
+            {
+                Tasks = Tasks.Where(Entity => Entity.Status == Filter.Status);
+            }
+
+            return await Tasks.ToListAsync(Token);
         }
 
         public async Task<TaskItem> GetOneTask(Guid Id, CancellationToken Token)
@@ -48,12 +56,20 @@ namespace TaskManager.Repository
             return TaskIsFound;
         }
 
-        public async Task<UsuárioModel> GetTaskItemsByUser(Guid IdUser, CancellationToken Token)
+        public async Task<UsuárioModel> GetTaskItemsByUser(QueryObjectFilter Filter, Guid IdUser, CancellationToken Token)
         {
-            var UserWithYoursTasks = await _database.Usuarios
+            var Query = _database.Usuarios
                 .Include(Entity => Entity.Tasks)
-                .SingleOrDefaultAsync(Entity => Entity.Id == IdUser, cancellationToken: Token) 
+                .Where(Entity => Entity.Id == IdUser)
+                .AsQueryable()
             ;
+
+            var UserWithYoursTasks = await Query.SingleOrDefaultAsync(Token);
+
+            if(Filter.Status != null)
+            {
+                UserWithYoursTasks.Tasks = UserWithYoursTasks.Tasks.Where(task => task.Status == Filter.Status).ToList();
+            }
 
             return UserWithYoursTasks;
         }

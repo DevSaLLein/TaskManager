@@ -1,4 +1,5 @@
 using TaskManager.DTO;
+using TaskManager.Helpers;
 using TaskManager.Model;
 
 namespace TaskManager.Interface
@@ -11,12 +12,12 @@ namespace TaskManager.Interface
 
         Task<TaskItem> UpdateTask(TaskRequestDto Dto, Guid Id, CancellationToken Token);
 
-        Task<List<TaskItem>> GetAllTasks(CancellationToken Token);
+        Task<List<TaskItem>> GetAllTasks(QueryObjectFilter Filter, CancellationToken Token);
 
         Task<TaskItem> GetOneTask(Guid Id, CancellationToken Token);
 
         // By User
 
-        Task<UsuárioModel> GetTaskItemsByUser(Guid IdUser, CancellationToken Token);
+        Task<UsuárioModel> GetTaskItemsByUser(QueryObjectFilter Filter, Guid IdUser, CancellationToken Token);
     }
 }

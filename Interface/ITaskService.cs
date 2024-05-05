@@ -1,4 +1,5 @@
 using TaskManager.DTO;
+using TaskManager.Helpers;
 
 namespace TaskManager.Interface
 {
@@ -8,7 +9,7 @@ namespace TaskManager.Interface
 
         Task<bool> UpdateTask(Guid Id, TaskRequestDto Dto, CancellationToken Token);       
 
-        Task<List<TaskResponseDto>> GetAllTasks(CancellationToken Token);
+        Task<List<TaskResponseDto>> GetAllTasks(QueryObjectFilter Filter, CancellationToken Token);
 
         Task<TaskResponseDto> GetOneTask(Guid Id, CancellationToken Token);
         
@@ -16,6 +17,6 @@ namespace TaskManager.Interface
 
         // By user
 
-        Task<UserResponseDto> GetAllTasksByUserResponse(Guid IdUser, CancellationToken Token);
+        Task<UserResponseDto> GetAllTasksByUserResponse(QueryObjectFilter Filter, Guid IdUser, CancellationToken Token);
     }
 }
