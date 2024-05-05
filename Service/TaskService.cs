@@ -34,7 +34,7 @@ namespace TaskManager.Service
 
             foreach(TaskItem TaskItem in Tasks)
             {
-                TaskResponseDto TaskReponse = new TaskResponseDto(TaskItem.Nome, TaskItem.Status, TaskItem.Data, TaskItem.IdUser);
+                TaskResponseDto TaskReponse = new TaskResponseDto(TaskItem.Nome, TaskItem.Status, TaskItem.Data);
 
                 ListOfTasksResponse.Add(TaskReponse);
             }
@@ -48,7 +48,7 @@ namespace TaskManager.Service
             
             if(Task != null)
             {
-                TaskResponseDto TaskResponse = new TaskResponseDto(Task.Nome, Task.Status, Task.Data, Task.IdUser);
+                TaskResponseDto TaskResponse = new TaskResponseDto(Task.Nome, Task.Status, Task.Data);
                 return TaskResponse;
             }
 

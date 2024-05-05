@@ -18,7 +18,7 @@ namespace TaskManager.Controller
         {
             var GuidFromTask = await _service.CreateTask(Dto, Token);
 
-            return CreatedAtAction(nameof(GetOneTask), new { Id = GuidFromTask }, "Task created");
+            return CreatedAtAction(nameof(GetOneTask), new { Id = GuidFromTask }, Created());
         }
 
         [HttpGet]

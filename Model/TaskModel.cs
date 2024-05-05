@@ -1,7 +1,4 @@
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 using TaskManager.Enum;
 
 namespace TaskManager.Model
@@ -16,9 +13,9 @@ namespace TaskManager.Model
 
         public DateTime Data { get; private set; } = DateTime.UtcNow;
 
+        [JsonIgnore]
         public Guid IdUser { get; set; } = idUser;
 
-        [ForeignKey("IdUser")]
         [JsonIgnore]
         public virtual UsuárioModel Usuario { get; set; }
 

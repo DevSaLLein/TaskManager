@@ -13,7 +13,7 @@ namespace TaskManager.Migrations
 {
     [DbContext(typeof(TaskManagerContext))]
     [Migration("20240502224544_initial-database")]
-    partial class initialdatabase
+    partial class Initialdatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

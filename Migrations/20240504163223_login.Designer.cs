@@ -13,7 +13,7 @@ namespace TaskManager.Migrations
 {
     [DbContext(typeof(TaskManagerContext))]
     [Migration("20240504163223_login")]
-    partial class login
+    partial class Login
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
