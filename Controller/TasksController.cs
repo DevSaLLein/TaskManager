@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskManager.DTO;
 using TaskManager.Interface;
@@ -13,6 +12,8 @@ namespace TaskManager.Controller
         private readonly ITaskService _service = service;
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> CreateTask([FromBody] TaskRequestDto dto, CancellationToken token)
         {
             var guidFromTask = await _service.CreateTask(dto, token);
@@ -29,6 +30,8 @@ namespace TaskManager.Controller
         }
 
         [HttpGet("/byUser/{id:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> GetAllTasksByUser([FromRoute] Guid id, CancellationToken token)
         {
             var tasks = await _service.GetAllTasksByUserResponse(id, token);
@@ -37,6 +40,8 @@ namespace TaskManager.Controller
         }
 
         [HttpGet("{id:guid}")]
+        [ProducesResponseType(StatusCodes.Status302Found)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<ActionResult> GetOneTask([FromRoute] Guid id, CancellationToken token)
         {
             TaskResponseDto? taskSelectedById = await _service.GetOneTask(id, token);
@@ -47,6 +52,8 @@ namespace TaskManager.Controller
         }
 
         [HttpPatch("{id:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status304NotModified)]
         public async Task<ActionResult> UpdateTask([FromRoute] Guid id, [FromBody] TaskRequestDto dto, CancellationToken token)
         {
             bool taskIsFound = await _service.UpdateTask(id, dto,  token);
@@ -57,6 +64,8 @@ namespace TaskManager.Controller
         }
 
         [HttpDelete("{id:guid}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<ActionResult> DeleteTask([FromRoute] Guid id, CancellationToken token)
         {
             bool taskIsFound = await _service.DeleteTask(id, token);
