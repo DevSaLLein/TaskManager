@@ -6,67 +6,67 @@ using TaskManager.Model;
 
 namespace TaskManager.Repository
 {
-    public class TaskRepository(TaskManagerContext database) : ITaskRepository
+    public class TaskRepository(TaskManagerContext Database) : ITaskRepository
     {
-        private readonly TaskManagerContext _database = database;
+        private readonly TaskManagerContext _database = Database;
 
-        public async Task<TaskItem> CreateTask(TaskRequestDto dto, CancellationToken token)
+        public async Task<TaskItem> CreateTask(TaskRequestDto Dto, CancellationToken Token)
         {
-            TaskItem task = new TaskItem(dto.Nome, dto.idUser);
+            TaskItem Task = new TaskItem(Dto.Nome, Dto.IdUser);
 
-            await _database.AddAsync(task, token);
-            await _database.SaveChangesAsync(token);
+            await _database.AddAsync(Task, Token);
+            await _database.SaveChangesAsync(Token);
 
-            return task;
+            return Task;
         }
 
-        public async Task<TaskItem?> DeleteTask(Guid Id, CancellationToken token)
+        public async Task<TaskItem> DeleteTask(Guid Id, CancellationToken Token)
         {
-            var taskIsFound = await GetOneTask(Id, token);
+            var TaskIsFound = await GetOneTask(Id, Token);
 
-            if(taskIsFound != null) 
+            if(TaskIsFound != null) 
             {
-                _database.Tasks.Remove(taskIsFound);
+                _database.Tasks.Remove(TaskIsFound);
 
-                await _database.SaveChangesAsync(token);
+                await _database.SaveChangesAsync(Token);
             }
         
-            return taskIsFound;
+            return TaskIsFound;
         }
         
-        public async Task<List<TaskItem>> GetAllTasks(CancellationToken token)
+        public async Task<List<TaskItem>> GetAllTasks(CancellationToken Token)
         {
-            return await _database.Tasks.ToListAsync(token);
+            return await _database.Tasks.ToListAsync(Token);
         }
 
-        public async Task<TaskItem?> GetOneTask(Guid Id, CancellationToken token)
+        public async Task<TaskItem> GetOneTask(Guid Id, CancellationToken Token)
         {
-            TaskItem? taskIsFound = await _database.Tasks.SingleOrDefaultAsync(task => task.Id == Id, cancellationToken: token);
+            TaskItem TaskIsFound = await _database.Tasks.SingleOrDefaultAsync(task => task.Id == Id, cancellationToken: Token);
 
-            if(taskIsFound == null) return null;
+            if(TaskIsFound == null) return null;
 
-            return taskIsFound;
+            return TaskIsFound;
         }
 
-        public async Task<UsuárioModel> GetTaskItemsByUser(Guid IdUser, CancellationToken token)
+        public async Task<UsuárioModel> GetTaskItemsByUser(Guid IdUser, CancellationToken Token)
         {
-            var login = await _database.Usuarios
-                .Include(Login => Login.Tasks)
-                .SingleOrDefaultAsync(Login => Login.Id == IdUser, cancellationToken: token) 
+            var UserWithYoursTasks = await _database.Usuarios
+                .Include(Entity => Entity.Tasks)
+                .SingleOrDefaultAsync(Entity => Entity.Id == IdUser, cancellationToken: Token) 
             ;
 
-            return login;
+            return UserWithYoursTasks;
         }
 
-        public async Task<TaskItem?> UpdateTask(TaskRequestDto dto, Guid Id, CancellationToken token)
+        public async Task<TaskItem> UpdateTask(TaskRequestDto dto, Guid Id, CancellationToken Token)
         {
-            var taskIsFound = await GetOneTask(Id, token);
+            var TaskIsFound = await GetOneTask(Id, Token);
             
-            taskIsFound?.UpdateTask(dto.Nome);
+            TaskIsFound?.UpdateTask(dto.Nome);
 
-            await _database.SaveChangesAsync(token);
+            await _database.SaveChangesAsync(Token);
 
-            return taskIsFound;
+            return TaskIsFound;
         }
     }
 }

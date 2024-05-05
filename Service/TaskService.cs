@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using TaskManager.DTO;
 using TaskManager.Interface;
 using TaskManager.Model;
@@ -11,15 +10,15 @@ namespace TaskManager.Service
 
         public async Task<Guid> CreateTask(TaskRequestDto dto, CancellationToken token)
         {
-            var task = await _repository.CreateTask(dto, token);
-            return task.Id;
+            var Task = await _repository.CreateTask(dto, token);
+            return Task.Id;
         }
 
         public async Task<bool> UpdateTask(Guid id, TaskRequestDto dto, CancellationToken token)
         {
-            TaskItem? task = await _repository.UpdateTask(dto, id, token);
+            TaskItem Task = await _repository.UpdateTask(dto, id, token);
 
-            if(task != null) 
+            if(Task != null) 
             {
                 return true;
             }
@@ -29,28 +28,28 @@ namespace TaskManager.Service
 
         public async Task<List<TaskResponseDto>> GetAllTasks(CancellationToken token)
         {
-            List<TaskItem> tasks = await _repository.GetAllTasks(token);
+            List<TaskItem> Tasks = await _repository.GetAllTasks(token);
 
-            List<TaskResponseDto> listResponse = new List<TaskResponseDto>();
+            List<TaskResponseDto> ListOfTasksResponse = new List<TaskResponseDto>();
 
-            foreach(TaskItem taskItem in tasks)
+            foreach(TaskItem TaskItem in Tasks)
             {
-                TaskResponseDto taskReponse = new TaskResponseDto(taskItem.Nome, taskItem.Status, taskItem.Data, taskItem.IdLogin);
+                TaskResponseDto TaskReponse = new TaskResponseDto(TaskItem.Nome, TaskItem.Status, TaskItem.Data, TaskItem.IdUser);
 
-                listResponse.Add(taskReponse);
+                ListOfTasksResponse.Add(TaskReponse);
             }
 
-            return listResponse;
+            return ListOfTasksResponse;
         }
 
         public async Task<TaskResponseDto> GetOneTask(Guid id, CancellationToken token)
         {
-            TaskItem? task = await _repository.GetOneTask(id, token);
+            TaskItem Task = await _repository.GetOneTask(id, token);
             
-            if(task != null)
+            if(Task != null)
             {
-                TaskResponseDto taskDto = new TaskResponseDto(task.Nome, task.Status, task.Data, task.IdLogin);
-                return taskDto;
+                TaskResponseDto TaskResponse = new TaskResponseDto(Task.Nome, Task.Status, Task.Data, Task.IdUser);
+                return TaskResponse;
             }
 
             return null;
@@ -58,9 +57,9 @@ namespace TaskManager.Service
 
         public async Task<bool> DeleteTask(Guid id, CancellationToken token)
         {
-            TaskItem? task = await _repository.GetOneTask(id, token);
+            TaskItem Task = await _repository.GetOneTask(id, token);
 
-            if(task != null) 
+            if(Task != null) 
             {
                 await _repository.DeleteTask(id, token);
                 return true;
@@ -71,12 +70,15 @@ namespace TaskManager.Service
 
         public async Task<UserResponseDto> GetAllTasksByUserResponse(Guid idUser, CancellationToken token)
         {
-            UsuárioModel login = await _repository.GetTaskItemsByUser(idUser, token);
+            UsuárioModel TasksByUser = await _repository.GetTaskItemsByUser(idUser, token);
 
+            UserResponseDto UserWithYoursTasksResponse = new UserResponseDto(
+                TasksByUser.Id, 
+                TasksByUser.Login, 
+                TasksByUser.Tasks
+            );  
 
-            UserResponseDto User = new UserResponseDto(login.Id, login.Login, login.Tasks);  
-
-            return User;
+            return UserWithYoursTasksResponse;
         }
     }
 }

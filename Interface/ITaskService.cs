@@ -4,14 +4,18 @@ namespace TaskManager.Interface
 {
     public interface ITaskService
     {
-        Task<Guid> CreateTask(TaskRequestDto dto, CancellationToken token);
-        Task<bool> UpdateTask(Guid id, TaskRequestDto dto, CancellationToken token);       
-        Task<List<TaskResponseDto>> GetAllTasks(CancellationToken token);
-        Task<TaskResponseDto> GetOneTask(Guid id, CancellationToken token);
-        Task<bool> DeleteTask(Guid id, CancellationToken token);
+        Task<Guid> CreateTask(TaskRequestDto Dto, CancellationToken Token);
+
+        Task<bool> UpdateTask(Guid Id, TaskRequestDto Dto, CancellationToken Token);       
+
+        Task<List<TaskResponseDto>> GetAllTasks(CancellationToken Token);
+
+        Task<TaskResponseDto> GetOneTask(Guid Id, CancellationToken Token);
+        
+        Task<bool> DeleteTask(Guid Id, CancellationToken Token);
 
         // By user
 
-        Task<UserResponseDto> GetAllTasksByUserResponse(Guid idUser, CancellationToken token);
+        Task<UserResponseDto> GetAllTasksByUserResponse(Guid IdUser, CancellationToken Token);
     }
 }

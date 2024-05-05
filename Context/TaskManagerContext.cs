@@ -4,24 +4,24 @@ using TaskManager.Model;
 
 namespace TaskManager.Context
 {
-    public class TaskManagerContext(DbContextOptions<TaskManagerContext> options) : DbContext(options)
+    public class TaskManagerContext(DbContextOptions<TaskManagerContext> Option) : DbContext(Option)
     {
         public DbSet<TaskItem> Tasks { get; set; }
         public DbSet<UsuárioModel> Usuarios { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        protected override void OnConfiguring(DbContextOptionsBuilder OptionsBuilder)
         {
-            optionsBuilder.LogTo(Console.WriteLine, LogLevel.Information);
+            OptionsBuilder.LogTo(Console.WriteLine, LogLevel.Information);
             
-            base.OnConfiguring(optionsBuilder);
+            base.OnConfiguring(OptionsBuilder);
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder ModelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new TaskMap());
-            modelBuilder.ApplyConfiguration(new LoginMap());
+            ModelBuilder.ApplyConfiguration(new TaskMap());
+            ModelBuilder.ApplyConfiguration(new LoginMap());
 
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(ModelBuilder);
         }
     }
 }

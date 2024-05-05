@@ -11,60 +11,59 @@ namespace TaskManager.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UsuariosController(TaskManagerContext database, IConfiguration configuration) : ControllerBase
+    public class UsuariosController(TaskManagerContext Database, IConfiguration Configuration) : ControllerBase
     {
-        private readonly IConfiguration _configuration = configuration;        
-        private readonly TaskManagerContext _database = database;
+        private readonly IConfiguration _configuration = Configuration;        
+        private readonly TaskManagerContext _database = Database;
 
         [HttpPost]
-        public IActionResult SignUp([FromBody] SignDto dto)
+        public IActionResult SignUp([FromBody] SignDto Dto)
         {
             try
             {
-                var loginAlreadyExist = _database.Usuarios.Where(login => login.Login == dto.Login);
+                var LoginAlreadyExist = _database.Usuarios.Where(Entity => Entity.Login == Dto.Login);
 
-                if(!loginAlreadyExist.IsNullOrEmpty()) return Conflict("Usuário já cadastrado");
+                if(!LoginAlreadyExist.IsNullOrEmpty()) return Conflict("Usuário já cadastrado");
 
-                var token = GenerateTokenJWT(dto.Login);
+                var Token = GenerateTokenJWT(Dto.Login);
 
-                UsuárioModel newLogin = new UsuárioModel(dto.Login, dto.Password, token);
+                UsuárioModel NewLogin = new UsuárioModel(Dto.Login, Dto.Password, Token);
                 
-                _database.Usuarios.Add(newLogin);
+                _database.Usuarios.Add(NewLogin);
                 _database.SaveChanges();
 
-                return Ok(new { mensage = "Usuário cadastrado com sucesso", token });
+                return Ok(new { Mensage = "Usuário cadastrado com sucesso", Token });
             }
-            catch (Exception ex)
+            catch (Exception Ex)
             {
-                Console.WriteLine($"Erro ao tentar logar: {ex.Message}");
+                Console.WriteLine($"Erro ao tentar logar: {Ex.Message}");
                 return StatusCode(500, "Erro interno do servidor");
             }
         }
 
-        private string GenerateTokenJWT(string login)
+        private string GenerateTokenJWT(string Login)
         {
-            string key = _configuration["Jwt:Key"];
+            string Key = _configuration["Jwt:Key"];
+            string Issuer = _configuration["Jwt:Issuer"];
+            string Audience = _configuration["Jwt:Audience"];
 
-            var issuer = _configuration["Jwt:Issuer"];
-            var audience = _configuration["Jwt:Audience"];
+            SymmetricSecurityKey KeyCrip = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Key));
+            SigningCredentials Credential = new SigningCredentials(KeyCrip, SecurityAlgorithms.HmacSha256);
 
-            var chave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
-            var credential = new SigningCredentials(chave, SecurityAlgorithms.HmacSha256);
-
-            var claims = new[]
+            var Claims = new[]
             {
-                new Claim(ClaimTypes.Name, login),
+                new Claim(ClaimTypes.Name, Login),
             };
 
-            var token = new JwtSecurityToken(
-                issuer: issuer,
-                audience: audience,
-                claims: claims, 
+            var Token = new JwtSecurityToken(
+                issuer: Issuer,
+                audience: Audience,
+                claims: Claims, 
                 expires: DateTime.Now.AddHours(2),
-                signingCredentials: credential
+                signingCredentials: Credential
             );
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            return new JwtSecurityTokenHandler().WriteToken(Token);
         }
     }
 }

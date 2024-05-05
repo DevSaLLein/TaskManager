@@ -6,29 +6,21 @@ using TaskManager.Enum;
 
 namespace TaskManager.Model
 {
-    public class TaskItem
+    public class TaskItem(string nome, Guid idUser)
     {
         public Guid Id { get; init; }
 
-        [Required]
-        public string Nome { get; private set; } = string.Empty;
+        public string Nome { get; private set; } = nome;
 
-        [Required]
         public StatusEnum Status { get; private set; } = StatusEnum.Pendente;
+
         public DateTime Data { get; private set; } = DateTime.UtcNow;
 
-        [Required]
-        public Guid IdLogin { get; set; }
+        public Guid IdUser { get; set; } = idUser;
 
-        [ForeignKey("IdLogin")]
+        [ForeignKey("IdUser")]
         [JsonIgnore]
-        public virtual UsuárioModel Login { get; set; }
-
-        public TaskItem(string nome, Guid idLogin)
-        {
-            Nome = nome;
-            IdLogin = idLogin;
-        }
+        public virtual UsuárioModel Usuario { get; set; }
 
         public void UpdateTask(string nome)
         {
