@@ -11,10 +11,9 @@ namespace TaskManager.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class LoginController(TaskManagerContext database) : ControllerBase
+    public class LoginController(TaskManagerContext database, IConfiguration configuration) : ControllerBase
     {
-        private readonly string key = "0cbd2ce1-1f06-49f4-a693-0ae2f767db85";
-
+        private readonly IConfiguration _configuration = configuration;        
         private readonly TaskManagerContext _database = database;
 
         [HttpPost]
@@ -44,17 +43,22 @@ namespace TaskManager.Controller
 
         private string GenerateTokenJWT(string login)
         {
+            string key = _configuration["Jwt:Key"];
+
+            var issuer = _configuration["Jwt:Issuer"];
+            var audience = _configuration["Jwt:Audience"];
+
             var chave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
             var credential = new SigningCredentials(chave, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
             {
-                new Claim("login", login),
+                new Claim(ClaimTypes.Name, login),
             };
 
             var token = new JwtSecurityToken(
-                issuer: "devsallein",
-                audience: "application",
+                issuer: issuer,
+                audience: audience,
                 claims: claims, 
                 expires: DateTime.Now.AddHours(2),
                 signingCredentials: credential

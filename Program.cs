@@ -10,8 +10,6 @@ using TaskManager.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
-string key = "0cbd2ce1-1f06-49f4-a693-0ae2f767db85";
-
 // Add services to the container.
 
 builder.Services.AddDbContext<TaskManagerContext> (
@@ -22,6 +20,8 @@ builder.Services.AddDbContext<TaskManagerContext> (
 
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<ITaskService, TaskService>();     
+
+// builder.Services.AddMvc(options => options.Filters.Add(typeof(IExceptionFilter)));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -75,9 +75,9 @@ builder.Services.AddAuthentication(
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = "devsallein",
-            ValidAudience  = "application",
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience  = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
 
     }

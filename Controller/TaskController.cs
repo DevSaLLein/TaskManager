@@ -5,7 +5,7 @@ using TaskManager.Interface;
 
 namespace TaskManager.Controller
 {
-    // [Authorize]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class TaskController(ITaskService service) : ControllerBase
