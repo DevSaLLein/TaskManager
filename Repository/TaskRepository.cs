@@ -12,7 +12,7 @@ namespace TaskManager.Repository
 
         public async Task<TaskItem> CreateTask(TaskRequestDto dto, CancellationToken token)
         {
-            TaskItem task = new TaskItem(dto.Nome);
+            TaskItem task = new TaskItem(dto.Nome, dto.idUser);
 
             await _database.AddAsync(task, token);
             await _database.SaveChangesAsync(token);

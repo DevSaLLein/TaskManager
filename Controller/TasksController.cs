@@ -5,21 +5,19 @@ using TaskManager.Interface;
 
 namespace TaskManager.Controller
 {
-    [Authorize]
+    // [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class TaskController(ITaskService service) : ControllerBase
+    public class TasksController(ITaskService service) : ControllerBase
     {
         private readonly ITaskService _service = service;
 
         [HttpPost]
         public async Task<ActionResult> CreateTask([FromBody] TaskRequestDto dto, CancellationToken token)
         {
-            bool success = await _service.CreateTask(dto, token);
+            var guidFromTask = await _service.CreateTask(dto, token);
 
-            if(success) return Created();
-
-            return BadRequest("Error ao criar uma nova tarefa");
+            return CreatedAtAction(nameof(GetOneTask), new { id = guidFromTask }, "Task created");
         }
 
         [HttpGet]
@@ -30,8 +28,8 @@ namespace TaskManager.Controller
             return Ok(tasks);
         }
 
-        [HttpGet("/porUser/{id:guid}")]
-        public async Task<ActionResult> GetAllTasksByUser(Guid id, CancellationToken token)
+        [HttpGet("/byUser/{id:guid}")]
+        public async Task<ActionResult> GetAllTasksByUser([FromRoute] Guid id, CancellationToken token)
         {
             var tasks = await _service.GetAllTasksByUserResponse(id, token);
 
@@ -39,7 +37,7 @@ namespace TaskManager.Controller
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult> GetoneTask(Guid id, CancellationToken token)
+        public async Task<ActionResult> GetOneTask([FromRoute] Guid id, CancellationToken token)
         {
             TaskResponseDto? taskSelectedById = await _service.GetOneTask(id, token);
 
@@ -49,17 +47,17 @@ namespace TaskManager.Controller
         }
 
         [HttpPatch("{id:guid}")]
-        public async Task<ActionResult> UpdateTask(Guid id, [FromBody] TaskRequestDto dto, CancellationToken token)
+        public async Task<ActionResult> UpdateTask([FromRoute] Guid id, [FromBody] TaskRequestDto dto, CancellationToken token)
         {
             bool taskIsFound = await _service.UpdateTask(id, dto,  token);
 
-            if(taskIsFound) return Ok(taskIsFound);
+            if(taskIsFound) return NoContent();
             
             return NotFound("Tarefa não encontrada");
         }
 
         [HttpDelete("{id:guid}")]
-        public async Task<ActionResult> DeleteTask(Guid id, CancellationToken token)
+        public async Task<ActionResult> DeleteTask([FromRoute] Guid id, CancellationToken token)
         {
             bool taskIsFound = await _service.DeleteTask(id, token);
 

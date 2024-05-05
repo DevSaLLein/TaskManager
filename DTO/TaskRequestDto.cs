@@ -1,6 +1,6 @@
 namespace TaskManager.DTO
 {
-    public record TaskRequestDto(string Nome)
+    public record TaskRequestDto(string Nome, Guid idUser)
     {
         
     }

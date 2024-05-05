@@ -10,7 +10,7 @@ namespace TaskManager.Context.Map
         {
             builder.HasKey(entity => entity.Id);
             builder.Property(entity => entity.Nome).IsRequired().HasMaxLength(255);
-
+            
             builder.HasOne(task => task.Login)
             .WithMany(login => login.Tasks)
             .HasForeignKey(task => task.IdLogin);

@@ -1,4 +1,6 @@
+using System.Runtime.InteropServices;
 using TaskManager.Enum;
+using TaskManager.Model;
 
 namespace TaskManager.DTO
 {
