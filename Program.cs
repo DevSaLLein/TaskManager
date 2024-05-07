@@ -1,9 +1,13 @@
 using System.Text;
+using ConsumoDeAPIs;
+using ConsumoDeAPIs.Integration.Interfaces;
+using ConsumoDeAPIs.Integration.Response.Refit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using Refit;
 using TaskManager.Context;
 using TaskManager.Interface;
 using TaskManager.Repository;
@@ -20,7 +24,13 @@ builder.Services.AddDbContext<TaskManagerContext> (
 );
 
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
-builder.Services.AddScoped<ITaskService, TaskService>();    
+builder.Services.AddScoped<ITaskService, TaskService>();  
+builder.Services.AddScoped<IViaCepIntegracao, ViaCepIntegracao>(); 
+
+builder.Services
+    .AddRefitClient<IViaCepIntegracaoRefit>()
+    .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://viacep.com.br/"))
+;
 
 // builder.Services.AddMvc(options => options.Filters.Add(typeof(IExceptionFilter)));
 

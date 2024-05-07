@@ -43,6 +43,10 @@ namespace TaskManager.Repository
                 Tasks = Tasks.Where(Entity => Entity.Status == Filter.Status)
             ;
 
+            if(Filter.isSortByData)
+                Tasks = Tasks.OrderByDescending(Task => Task.Data); 
+            ;
+
             return await Tasks.ToListAsync(Token);
         }
 
