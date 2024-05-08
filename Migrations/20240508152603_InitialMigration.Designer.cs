@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TaskManager.Context;
@@ -11,9 +12,11 @@ using TaskManager.Context;
 namespace TaskManager.Migrations
 {
     [DbContext(typeof(TaskManagerContext))]
-    partial class TaskManagerContextModelSnapshot : ModelSnapshot
+    [Migration("20240508152603_InitialMigration")]
+    partial class InitialMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,38 +25,32 @@ namespace TaskManager.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("TaskManager.Model.LocationModel", b =>
+            modelBuilder.Entity("TaskManager.Model.LocalizacaoModel", b =>
                 {
                     b.Property<string>("Cep")
                         .HasColumnType("text");
 
                     b.Property<string>("Bairro")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Complemento")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Ddd")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Localidade")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Logradouro")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Uf")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Cep");
 
-                    b.ToTable("Localizações");
+                    b.ToTable("LocalizacaoModel");
                 });
 
             modelBuilder.Entity("TaskManager.Model.TaskItem", b =>
@@ -126,14 +123,14 @@ namespace TaskManager.Migrations
 
             modelBuilder.Entity("TaskManager.Model.UserModel", b =>
                 {
-                    b.HasOne("TaskManager.Model.LocationModel", "Location")
+                    b.HasOne("TaskManager.Model.LocalizacaoModel", "Localizacao")
                         .WithMany("Usuários")
                         .HasForeignKey("Cep");
 
-                    b.Navigation("Location");
+                    b.Navigation("Localizacao");
                 });
 
-            modelBuilder.Entity("TaskManager.Model.LocationModel", b =>
+            modelBuilder.Entity("TaskManager.Model.LocalizacaoModel", b =>
                 {
                     b.Navigation("Usuários");
                 });

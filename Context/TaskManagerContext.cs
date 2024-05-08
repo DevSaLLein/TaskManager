@@ -7,7 +7,8 @@ namespace TaskManager.Context
     public class TaskManagerContext(DbContextOptions<TaskManagerContext> Option) : DbContext(Option)
     {
         public DbSet<TaskItem> Tasks { get; set; }
-        public DbSet<UsuárioModel> Usuarios { get; set; }
+        public DbSet<UserModel> Users { get; set; }
+        public DbSet<LocationModel> Localizações { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder OptionsBuilder)
         {
@@ -19,7 +20,8 @@ namespace TaskManager.Context
         protected override void OnModelCreating(ModelBuilder ModelBuilder)
         {
             ModelBuilder.ApplyConfiguration(new TaskMap());
-            ModelBuilder.ApplyConfiguration(new LoginMap());
+            ModelBuilder.ApplyConfiguration(new UserMap());
+            ModelBuilder.ApplyConfiguration(new LocationMap());
 
             base.OnModelCreating(ModelBuilder);
         }

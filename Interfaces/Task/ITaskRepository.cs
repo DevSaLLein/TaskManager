@@ -2,7 +2,7 @@ using TaskManager.Helpers;
 using TaskManager.Model;
 using TaskManager.DTO;
 
-namespace TaskManager.Interface
+namespace TaskManager.Interfaces
 {
     public interface ITaskRepository
     {
@@ -15,9 +15,5 @@ namespace TaskManager.Interface
         Task<List<TaskItem>> GetAllTasks(QueryObjectFilter Filter, CancellationToken Token);
 
         Task<TaskItem> GetOneTask(Guid Id, CancellationToken Token);
-
-        // By User
-
-        Task<UsuárioModel> GetTaskItemsByUser(QueryObjectFilter Filter, Guid IdUser, CancellationToken Token);
     }
 }

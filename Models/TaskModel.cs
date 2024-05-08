@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 using TaskManager.Enum;
 
@@ -18,7 +17,7 @@ namespace TaskManager.Model
         public Guid IdUser { get; set; } = idUser;
 
         [JsonIgnore]
-        public virtual UsuárioModel Usuario { get; set; }
+        public virtual UserModel Usuario { get; set; }
 
         public void UpdateTask(string nome)
         {

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;    
 using TaskManager.Helpers;
-using TaskManager.Interface;
+using TaskManager.Interfaces;
 using TaskManager.DTO;
 
 namespace TaskManager.Controller
@@ -28,13 +28,13 @@ namespace TaskManager.Controller
                 return Ok(Tasks);
             }
 
-            [HttpGet("/byUser/{Id:guid}")]
-            public async Task<ActionResult> GetAllTasksByUser([FromQuery] QueryObjectFilter Filter, [FromRoute] Guid Id, CancellationToken Token)
-            {
-                var TasksByUser = await _service.GetAllTasksByUserResponse(Filter, Id, Token);
+            // [HttpGet("/byUser/{Id:guid}")]
+            // public async Task<ActionResult> GetAllTasksByUser([FromQuery] QueryObjectFilter Filter, [FromRoute] Guid Id, CancellationToken Token)
+            // {
+            //     var TasksByUser = await _service.GetAllTasksByUserResponse(Filter, Id, Token);
 
-                return Ok(TasksByUser);
-            }
+            //     return Ok(TasksByUser);
+            // }
 
             [HttpGet("{Id:guid}")]
             public async Task<ActionResult> GetOneTask([FromRoute] Guid Id, CancellationToken Token)
@@ -46,7 +46,7 @@ namespace TaskManager.Controller
                 return NotFound("Tarefa não encontrada");
             }
 
-            [HttpPut("/{Id:guid}")]
+            [HttpPut("{Id:guid}")]
             public async Task<ActionResult> UpdateTask([FromRoute] Guid Id, [FromBody] TaskUpdateRequestDto Dto, CancellationToken Token)
             {
                 if(!ModelState.IsValid) return BadRequest(ModelState);
@@ -58,7 +58,7 @@ namespace TaskManager.Controller
                 return NotFound("Tarefa não encontrada");
             }
 
-            [HttpDelete("/{Id:guid}")]        
+            [HttpDelete("{Id:guid}")]        
             public async Task<ActionResult> DeleteTask([FromRoute] Guid Id, CancellationToken Token)
             {
                 bool TaskIsFound = await _service.DeleteTask(Id, Token);

@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TaskManager.Context;
 using TaskManager.Helpers;
-using TaskManager.Interface;
+using TaskManager.Interfaces;
 using TaskManager.Model;
 using TaskManager.DTO;
 
@@ -57,23 +57,6 @@ namespace TaskManager.Repository
             if(TaskIsFound == null) return null;
 
             return TaskIsFound;
-        }
-
-        public async Task<UsuárioModel> GetTaskItemsByUser(QueryObjectFilter Filter, Guid IdUser, CancellationToken Token)
-        {
-            var Query = _database.Usuarios
-                .Include(Entity => Entity.Tasks)
-                .Where(Entity => Entity.Id == IdUser)
-                .AsQueryable()
-            ;
-
-            var UserWithYoursTasks = await Query.SingleOrDefaultAsync(Token);
-
-            if(Filter.Status != null)
-                UserWithYoursTasks.Tasks = UserWithYoursTasks.Tasks.Where(task => task.Status == Filter.Status).ToList()
-            ;
-
-            return UserWithYoursTasks;
         }
 
         public async Task<TaskItem> UpdateTask(TaskUpdateRequestDto dto, Guid Id, CancellationToken Token)

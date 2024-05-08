@@ -3,44 +3,44 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using TaskManager.Context;
 using TaskManager.DTO;
-using TaskManager.Model;
+using TaskManager.Helpers;
+using TaskManager.Interfaces;
 
 namespace TaskManager.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UsuariosController(TaskManagerContext Database, IConfiguration Configuration) : ControllerBase
+    public class UsersController(IUserService Service, IConfiguration Configuration) : ControllerBase
     {
         private readonly IConfiguration _configuration = Configuration;        
-        private readonly TaskManagerContext _database = Database;
+        private readonly IUserService _service = Service;
 
         [HttpPost]
-        public IActionResult SignUp([FromBody] UsuarioCreateRequestDto Dto)
+        public async Task<IActionResult> SignUp([FromBody] UserCreateRequestDto Dto, CancellationToken Token)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
-            {
-                var Token = GenerateTokenJWT(Dto.Login);
+            {         
+                var JwtAuthentication = GenerateTokenJWT(Dto.Login);
+                var LoginAlreadyExist = await _service.CreateUser(Dto, JwtAuthentication, Token);
 
-                var LoginAlreadyExist = _database.Usuarios.Where(Entity => Entity.Login == Dto.Login);
-
-                if (!LoginAlreadyExist.IsNullOrEmpty()) return Conflict("Usuário já cadastrado");
-
-                UsuárioModel NewLogin = new UsuárioModel(Dto.Login, Dto.Password, Token);
-
-                _database.Usuarios.Add(NewLogin);
-                _database.SaveChanges();
-
-                return Ok(new { Mensage = "Usuário cadastrado com sucesso", Token });
+                return Ok(new { Mensage = "Usuário cadastrado com sucesso", JwtAuthentication });
             }
             catch (Exception Ex)
             {
                 Console.WriteLine($"Erro ao tentar logar: {Ex.Message}");
                 return StatusCode(500, "Erro interno do servidor");
             }
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetAllUsersWithYoursTasksAndLocalizationDetails([FromQuery] QueryObjectFilter Filter, CancellationToken Token)
+        {
+            List<UsuarioResponseDtoWithYoursTasks> UsersWithTasksAndLocalization = await _service.GetAllUsersWithYoursTasksAndLocalizationDetails(Filter, Token);
+
+            return Ok(UsersWithTasksAndLocalization);
         }
 
         private string GenerateTokenJWT(string Login)

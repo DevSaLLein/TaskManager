@@ -1,7 +1,7 @@
 using TaskManager.Helpers;
 using TaskManager.DTO;
 
-namespace TaskManager.Interface
+namespace TaskManager.Interfaces
 {
     public interface ITaskService
     {
@@ -14,9 +14,5 @@ namespace TaskManager.Interface
         Task<TaskResponseDto> GetOneTask(Guid Id, CancellationToken Token);
         
         Task<bool> DeleteTask(Guid Id, CancellationToken Token);
-
-        // By user
-
-        Task<UsuarioResponseDto> GetAllTasksByUserResponse(QueryObjectFilter Filter, Guid IdUser, CancellationToken Token);
     }
 }

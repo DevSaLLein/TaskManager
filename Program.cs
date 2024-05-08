@@ -9,7 +9,7 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Refit;
 using TaskManager.Context;
-using TaskManager.Interface;
+using TaskManager.Interfaces;
 using TaskManager.Repository;
 using TaskManager.Service;
 
@@ -25,7 +25,11 @@ builder.Services.AddDbContext<TaskManagerContext> (
 
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<ITaskService, TaskService>();  
+
 builder.Services.AddScoped<IViaCepIntegracao, ViaCepIntegracao>(); 
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services
     .AddRefitClient<IViaCepIntegracaoRefit>()

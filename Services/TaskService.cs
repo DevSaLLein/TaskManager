@@ -1,5 +1,5 @@
 using TaskManager.Helpers;
-using TaskManager.Interface;
+using TaskManager.Interfaces;
 using TaskManager.Model;
 using TaskManager.DTO;
 
@@ -67,25 +67,6 @@ namespace TaskManager.Service
             }
 
             return false;
-        }
-
-        public async Task<UsuarioResponseDto> GetAllTasksByUserResponse(QueryObjectFilter Filter, Guid idUser, CancellationToken token)
-        {
-            UsuárioModel TasksByUser = await _repository.GetTaskItemsByUser(Filter, idUser, token);
-
-            if(TasksByUser == null)
-            {
-                throw new Exception("Não há tasks para esse usuário nesse status");
-            }
-
-            UsuarioResponseDto UserWithYoursTasksResponse = new UsuarioResponseDto
-            (
-                TasksByUser.Id, 
-                TasksByUser.Login, 
-                TasksByUser.Tasks
-            );  
-
-            return UserWithYoursTasksResponse;
         }
     }
 }
