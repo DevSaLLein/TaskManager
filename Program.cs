@@ -3,6 +3,7 @@ using ConsumoDeAPIs;
 using ConsumoDeAPIs.Integration.Interfaces;
 using ConsumoDeAPIs.Integration.Response.Refit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -10,8 +11,10 @@ using Newtonsoft.Json;
 using Refit;
 using TaskManager.Context;
 using TaskManager.Interfaces;
+using TaskManager.Model;
 using TaskManager.Repository;
 using TaskManager.Service;
+using TasManager.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,12 +70,16 @@ builder.Services.AddSwaggerGen(swagger =>
 
     swagger.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, SecuritySchema);
 
-    swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        { SecuritySchema, Array.Empty<string>() }
-    }
+    swagger.AddSecurityRequirement
+    (
+        new OpenApiSecurityRequirement
+        {
+            { SecuritySchema, Array.Empty<string>() }
+        }
     );
 });
+
+
 
 builder.Services.AddControllers()
     .AddNewtonsoftJson(options => {
@@ -80,25 +87,37 @@ builder.Services.AddControllers()
     }
 );
 
+builder.Services.AddIdentity<UserIdentityApp, IdentityRole>(options =>
+{
+    options.Password.RequireDigit = true;
+    options.Password.RequiredLength = 12;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireLowercase = true;
+}).AddEntityFrameworkStores<TaskManagerContext>();
+
+
 builder.Services.AddAuthentication(
     options => {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultForbidScheme = 
+        options.DefaultScheme = 
+        options.DefaultSignInScheme =
+        options.DefaultSignOutScheme =  JwtBearerDefaults.AuthenticationScheme;
     }
-
 ).AddJwtBearer(
     options => {
         options.TokenValidationParameters = new TokenValidationParameters()
         {
             ValidateIssuer = true,  
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidateAudience = true,
+            ValidAudience  = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience  = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
-
     }
 );
 

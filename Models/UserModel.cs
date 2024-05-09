@@ -6,7 +6,7 @@ namespace TaskManager.Model
     public class UserModel(string login, string senha, string cep, string JwtAuthentication)
     {
         public Guid Id { get; init; }
-
+        
         public string Login { get; set; } = login;
 
         public string Senha { get; set; } = senha;
@@ -23,3 +23,4 @@ namespace TaskManager.Model
         public virtual LocationModel Location { get; set; }
     }
 }
+

@@ -15,7 +15,7 @@ namespace TaskManager.Repository
 
         public async Task<LocationModel> CreateLocalizacao(ViaCepResponse ViaCepResponse, CancellationToken Token)
         {
-            var cepAlreadyExist = await _database.Localizações.SingleOrDefaultAsync(Entity => Entity.Cep.Contains(ViaCepResponse.Cep), cancellationToken: Token);
+            var cepAlreadyExist = await _database.Location.SingleOrDefaultAsync(Entity => Entity.Cep.Contains(ViaCepResponse.Cep), cancellationToken: Token);
 
             if(cepAlreadyExist != null) return cepAlreadyExist;
 
@@ -30,7 +30,7 @@ namespace TaskManager.Repository
                 ViaCepResponse.Ddd
             );
 
-            await _database.Localizações.AddAsync(Localizacao, Token);
+            await _database.Location.AddAsync(Localizacao, Token);
             await _database.SaveChangesAsync(Token);
 
             return cepAlreadyExist;
@@ -57,12 +57,12 @@ namespace TaskManager.Repository
 
         public async Task<List<UserModel>> GetAllUsersWithoutTasksAndLocalization(QueryObjectFilter Filter, CancellationToken Token)
         {
-            return await _database.Users.ToListAsync(Token);
+            return await _database.UsersSign.ToListAsync(Token);
         }
 
         public async Task<List<UserModel>> GetAllUsersWithYoursTasksAndLocalizationDetails(QueryObjectFilter Filter, CancellationToken Token)
         {
-            var Query = _database.Users
+            var Query = _database.UsersSign
                 .Include(Entity => Entity.Tasks)
                 .Include(Entity => Entity.Location)
                 .AsQueryable();
@@ -87,7 +87,7 @@ namespace TaskManager.Repository
 
         public async Task<UserModel> GetUserByLogin(string Login, CancellationToken Token)
         {
-            return await _database.Users.SingleOrDefaultAsync(Entity => Entity.Login == Login, cancellationToken: Token);
+            return await _database.UsersSign.SingleOrDefaultAsync(Entity => Entity.Login == Login, cancellationToken: Token);
         }
     }
 }

@@ -1,20 +1,24 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using TaskManager.DTO;
 using TaskManager.Helpers;
 using TaskManager.Interfaces;
+using TaskManager.Model;
 
 namespace TaskManager.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UsersController(IUserService Service, IConfiguration Configuration) : ControllerBase
+    public class UsersController(IUserService Service, IConfiguration Configuration, UserManager<UserModel> UserManager) : ControllerBase
     {
         private readonly IConfiguration _configuration = Configuration;        
         private readonly IUserService _service = Service;
+
+        private readonly UserManager<UserModel> _userManager = UserManager;
 
         [HttpPost]
         public async Task<IActionResult> SignUp([FromBody] UserCreateRequestDto Dto, CancellationToken Token)
