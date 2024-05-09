@@ -71,8 +71,16 @@ namespace TaskManager.Repository
             if(Filter.Status != null){
                 Query.Where(Entity => Entity.Tasks.Any(Task => Task.Status == Filter.Status));
             }
+
+            var SkipNumber = (Filter.PageNumber - 1) * Filter.PageSize;
             
-            var UsersWithYoursTasksAndLocalizationDetails = await Query.ToListAsync(Token); 
+            var UsersWithYoursTasksAndLocalizationDetails = 
+                await Query
+                    .Skip(SkipNumber)
+                    .Take(Filter.PageSize)
+                    .ToListAsync(Token)
+                ;
+            ; 
 
             return UsersWithYoursTasksAndLocalizationDetails;
         }

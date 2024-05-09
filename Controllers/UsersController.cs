@@ -21,18 +21,10 @@ namespace TaskManager.Controller
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            try
-            {         
-                var JwtAuthentication = GenerateTokenJWT(Dto.Login);
-                var LoginAlreadyExist = await _service.CreateUser(Dto, JwtAuthentication, Token);
+            var JwtAuthentication = GenerateTokenJWT(Dto.Login);
+            await _service.CreateUser(Dto, JwtAuthentication, Token);
 
-                return Ok(new { Mensage = "Usuário cadastrado com sucesso", JwtAuthentication });
-            }
-            catch (Exception Ex)
-            {
-                Console.WriteLine($"Erro ao tentar logar: {Ex.Message}");
-                return StatusCode(500, "Erro interno do servidor");
-            }
+            return Ok(new { Mensage = "Usuário cadastrado com sucesso", JwtAuthentication });          
         }
 
         [HttpGet]

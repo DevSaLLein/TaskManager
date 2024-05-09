@@ -47,7 +47,9 @@ namespace TaskManager.Repository
                 Tasks = Tasks.OrderByDescending(Task => Task.Data); 
             ;
 
-            return await Tasks.ToListAsync(Token);
+            var SkipNumber = (Filter.PageNumber - 1) * Filter.PageSize;
+
+            return await Tasks.Skip(SkipNumber).Take(Filter.PageSize).ToListAsync(Token);
         }
 
         public async Task<TaskItem> GetOneTask(Guid Id, CancellationToken Token)
