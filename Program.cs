@@ -11,10 +11,11 @@ using Newtonsoft.Json;
 using Refit;
 using TaskManager.Context;
 using TaskManager.Interfaces;
-using TaskManager.Model;
 using TaskManager.Repository;
 using TaskManager.Service;
+using TasManager.Interfaces;
 using TasManager.Models;
+using TasManager.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,8 @@ builder.Services.AddScoped<IViaCepIntegracao, ViaCepIntegracao>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services
     .AddRefitClient<IViaCepIntegracaoRefit>()
@@ -95,7 +98,6 @@ builder.Services.AddIdentity<UserIdentityApp, IdentityRole>(options =>
     options.Password.RequireUppercase = true;
     options.Password.RequireLowercase = true;
 }).AddEntityFrameworkStores<TaskManagerContext>();
-
 
 builder.Services.AddAuthentication(
     options => {

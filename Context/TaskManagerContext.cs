@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TaskManager.Context.Map;
@@ -23,9 +24,16 @@ namespace TaskManager.Context
         {
             ModelBuilder.ApplyConfiguration(new TaskMap());
             ModelBuilder.ApplyConfiguration(new UserMap());
-            ModelBuilder.ApplyConfiguration(new LocationMap());
+            ModelBuilder.ApplyConfiguration(new LocationMap());     
+            
 
-            // ModelBuilder.ApplyConfiguration(new UserIdentityMap());
+            List<IdentityRole> Roles = new List<IdentityRole>
+            {
+                new IdentityRole { Name = "Admin", NormalizedName = "ADMIN" },
+                new IdentityRole { Name = "User", NormalizedName = "USER" }
+            };
+
+            ModelBuilder.Entity<IdentityRole>().HasData(Roles);
 
             base.OnModelCreating(ModelBuilder);
         }
