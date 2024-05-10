@@ -13,12 +13,11 @@ namespace TaskManager.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UsersController(IUserService Service, IConfiguration Configuration, UserManager<UserModel> UserManager) : ControllerBase
+    public class UsersController(IUserService Service, IConfiguration Configuration) : ControllerBase
     {
         private readonly IConfiguration _configuration = Configuration;        
         private readonly IUserService _service = Service;
 
-        private readonly UserManager<UserModel> _userManager = UserManager;
 
         [HttpPost]
         public async Task<IActionResult> SignUp([FromBody] UserCreateRequestDto Dto, CancellationToken Token)

@@ -4,6 +4,6 @@ namespace TasManager.Models
 {
     public class UserIdentityApp : IdentityUser
     {
-
+        
     }
 }

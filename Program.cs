@@ -47,42 +47,39 @@ builder.Services
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddSwaggerGen(swagger => 
+builder.Services.AddSwaggerGen(option =>
 {
-    swagger.SwaggerDoc("v1", new OpenApiInfo 
+    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Description = "API para o controle de Tarefas", Version = "v1" });
+    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Title = "TaskManager - API", 
-        Version = "V1",
-        Description = "API para o controle de Tarefas"
-    });
-
-    var SecuritySchema = new OpenApiSecurityScheme
-    {
-        Name = "JWT Authentication",
-        Description = "Entre o JWT Bearer token",
         In = ParameterLocation.Header,
+        Description = "Please enter a valid token",
+        Name = "Authorization",
         Type = SecuritySchemeType.Http,
-        Scheme = "bearer",
         BearerFormat = "JWT",
+        Scheme = "Bearer",
         Reference = new OpenApiReference
         {
             Id = JwtBearerDefaults.AuthenticationScheme,
             Type = ReferenceType.SecurityScheme
         }
-    };
-
-    swagger.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, SecuritySchema);
-
-    swagger.AddSecurityRequirement
-    (
-        new OpenApiSecurityRequirement
+        
+    });
+    option.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
         {
-            { SecuritySchema, Array.Empty<string>() }
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            new string[]{}
         }
-    );
+    });
 });
-
-
 
 builder.Services.AddControllers()
     .AddNewtonsoftJson(options => {

@@ -65,7 +65,7 @@ namespace TasManager.Controllers
 
             if(User == null) return NotFound("Invalid UserName");
 
-            var result = await _signIn.CheckPasswordSignInAsync(User, loginDto.Password, false);
+            var result = await _signIn.CheckPasswordSignInAsync(User, loginDto.Password, Token.CanBeCanceled);
 
             if(!result.Succeeded) return Unauthorized("Invalid password");
 
