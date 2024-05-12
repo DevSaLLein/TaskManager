@@ -18,12 +18,15 @@ namespace TaskManager.Repository
         {
             TaskItem Task = new TaskItem(Dto.Nome);
 
-            var User = await _database.Users.FirstOrDefaultAsync(Entity => Entity.UserName == UserName ,cancellationToken: Token);
-            Guid IdFromUser = Guid.Parse(User.Id);
-
             await _database.Tasks.AddAsync(Task, Token);
 
+            var TaskRecentCreated = await GetOneTaskByObject(Task);
+
             await _database.SaveChangesAsync(Token);
+
+            var isSuccess = await CreateRelationUserWithTheTask(UserName, TaskRecentCreated.Id, Token);
+
+            if(!isSuccess) return null;
 
             return Task;
         }
@@ -68,15 +71,29 @@ namespace TaskManager.Repository
             return TaskIsFound;
         }
 
+        public async Task<TaskItem> GetOneTaskByObject(TaskItem taskItem)
+        {
+            return await _database.Tasks.FindAsync(taskItem.Id);
+        }
+
         public async Task<TaskItem> UpdateTask(TaskUpdateRequestDto dto, Guid Id, CancellationToken Token)
         {
             var TaskIsFound = await GetOneTask(Id, Token);
             return TaskIsFound;
         }
 
-        private async Task<TaskItem> CreateRelationUserWithTheTask(string username, Guid IdFromTask)
+        private async Task<bool> CreateRelationUserWithTheTask(string UserName, Guid IdFromTask, CancellationToken Token)
         {
-            return null;       
+            var User = await _database.Users.FirstOrDefaultAsync(Entity => Entity.UserName == UserName ,cancellationToken: Token);
+            Guid IdFromUser = Guid.Parse(User.Id);
+
+            var newRelation = await _database.UserTasks.AddAsync(new UserTasks { UserId = IdFromUser.ToString(), TaskId = IdFromTask }, cancellationToken: Token);       
+            
+            if(newRelation == null) return false;
+
+            await _database.SaveChangesAsync(Token);
+
+            return true;
         } 
     }
 }

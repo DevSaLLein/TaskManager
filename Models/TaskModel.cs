@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using TaskManager.Enum;
 using TasManager.Models;
 
@@ -13,6 +14,7 @@ namespace TaskManager.Model
 
         public DateTime Data { get; set; } = DateTime.UtcNow;
 
+        [JsonIgnore]
         public virtual List<UserTasks> UserTasks { get; set; } = new List<UserTasks>(); 
 
         public TaskItem(string nome)

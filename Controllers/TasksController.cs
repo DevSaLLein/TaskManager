@@ -18,9 +18,9 @@ namespace TaskManager.Controller
             {
                 var Username = User.GetUsername();
 
-                var stringFromTask = await _service.CreateTask(Dto, Username, Token);
+                var IdFromTask = await _service.CreateTask(Dto, Username, Token);
 
-                return CreatedAtAction(nameof(GetOneTask), new { Id = stringFromTask }, Created());
+                return CreatedAtAction(nameof(GetOneTask), new { Id =IdFromTask }, Ok("Task Created"));
             }
 
             [HttpGet]
@@ -31,13 +31,6 @@ namespace TaskManager.Controller
                 return Ok(Tasks);
             }
 
-            // [HttpGet("/byUser/{Id}")]
-            // public async Task<ActionResult> GetAllTasksByUser([FromQuery] QueryObjectFilter Filter, [FromRoute] string Id, CancellationToken Token)
-            // {
-            //     var TasksByUser = await _service.GetAllTasksByUserResponse(Filter, Id, Token);
-
-            //     return Ok(TasksByUser);
-            // }
 
             [HttpGet("{Id}")]
             public async Task<ActionResult> GetOneTask([FromRoute] Guid Id, CancellationToken Token)
