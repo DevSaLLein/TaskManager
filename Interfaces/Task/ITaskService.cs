@@ -5,7 +5,7 @@ namespace TaskManager.Interfaces
 {
     public interface ITaskService
     {
-        Task<Guid> CreateTask(TaskCreateRequestDto Dto, CancellationToken Token);
+        Task<Guid> CreateTask(TaskCreateRequestDto Dto, string UserName, CancellationToken Token);
 
         Task<bool> UpdateTask(Guid Id, TaskUpdateRequestDto Dto, CancellationToken Token);       
 

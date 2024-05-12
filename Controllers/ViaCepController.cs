@@ -6,7 +6,7 @@ namespace ConsumoDeAPIs.Controller
 {
     [ApiController]
     [Route("[controller]")]
-    public class CepController(IViaCepIntegracao viaCep) : ControllerBase
+    public class ViaCepController(IViaCepIntegracao viaCep) : ControllerBase
     {
         private readonly IViaCepIntegracao _viaCep = viaCep;
 

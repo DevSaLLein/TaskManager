@@ -9,9 +9,9 @@ namespace TaskManager.Service
     {
         private readonly ITaskRepository _repository = repository;
 
-        public async Task<Guid> CreateTask(TaskCreateRequestDto dto, CancellationToken token)
+        public async Task<Guid> CreateTask(TaskCreateRequestDto dto, string UserName, CancellationToken token)
         {
-            var Task = await _repository.CreateTask(dto, token);
+            var Task = await _repository.CreateTask(dto, UserName, token);
             return Task.Id;
         }
 

@@ -6,7 +6,7 @@ namespace TaskManager.Interfaces
 {
     public interface ITaskRepository
     {
-        Task<TaskItem> CreateTask(TaskCreateRequestDto Dto, CancellationToken Token);
+        Task<TaskItem> CreateTask(TaskCreateRequestDto Dto, string UserName, CancellationToken Token);
 
         Task<TaskItem> DeleteTask(Guid Id, CancellationToken Token);
 

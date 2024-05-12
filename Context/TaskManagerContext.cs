@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TaskManager.Context.Map;
 using TaskManager.Model;
+using TasManager.Context.Map;
 using TasManager.Models;
 
 namespace TaskManager.Context
@@ -11,7 +12,7 @@ namespace TaskManager.Context
     {
         public DbSet<TaskItem> Tasks { get; set; }
         public DbSet<LocationModel> Location { get; set; }
-        public DbSet<UserModel> UsersSign { get; set; }
+        public DbSet<UserTasks> UserTasks { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder OptionsBuilder)
         {
@@ -23,10 +24,9 @@ namespace TaskManager.Context
         protected override void OnModelCreating(ModelBuilder ModelBuilder)
         {
             ModelBuilder.ApplyConfiguration(new TaskMap());
-            ModelBuilder.ApplyConfiguration(new UserMap());
-            ModelBuilder.ApplyConfiguration(new LocationMap());     
+            ModelBuilder.ApplyConfiguration(new LocationMap());    
+            ModelBuilder.ApplyConfiguration(new UserTasksMap()); 
             
-
             List<IdentityRole> Roles = new List<IdentityRole>
             {
                 new IdentityRole { Name = "Admin", NormalizedName = "ADMIN" },

@@ -4,10 +4,12 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace TaskManager.Migrations
 {
     /// <inheritdoc />
-    public partial class Identity : Migration
+    public partial class TaskIdForGuid : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -66,6 +68,20 @@ namespace TaskManager.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Location", x => x.Cep);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tasks",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Nome = table.Column<string>(type: "text", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Data = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tasks", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -175,44 +191,36 @@ namespace TaskManager.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UsersSign",
+                name: "UserTasks",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Login = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    Senha = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
-                    JwtAuthentication = table.Column<string>(type: "text", nullable: false),
-                    Cep = table.Column<string>(type: "text", nullable: true)
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    TaskId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UsersSign", x => x.Id);
+                    table.PrimaryKey("PK_UserTasks", x => new { x.UserId, x.TaskId });
                     table.ForeignKey(
-                        name: "FK_UsersSign_Location_Cep",
-                        column: x => x.Cep,
-                        principalTable: "Location",
-                        principalColumn: "Cep");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TasksItens",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Nome = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
-                    Data = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    IdUser = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TasksItens", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TasksItens_UsersSign_IdUser",
-                        column: x => x.IdUser,
-                        principalTable: "UsersSign",
+                        name: "FK_UserTasks_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserTasks_Tasks_TaskId",
+                        column: x => x.TaskId,
+                        principalTable: "Tasks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "6c23e3cf-7344-4f49-a532-498b7c94f287", null, "User", "USER" },
+                    { "b95e41fd-d363-4c0b-87bc-f73cc49a67cd", null, "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -253,14 +261,9 @@ namespace TaskManager.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_TasksItens_IdUser",
-                table: "TasksItens",
-                column: "IdUser");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UsersSign_Cep",
-                table: "UsersSign",
-                column: "Cep");
+                name: "IX_UserTasks_TaskId",
+                table: "UserTasks",
+                column: "TaskId");
         }
 
         /// <inheritdoc />
@@ -282,7 +285,10 @@ namespace TaskManager.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "TasksItens");
+                name: "Location");
+
+            migrationBuilder.DropTable(
+                name: "UserTasks");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -291,10 +297,7 @@ namespace TaskManager.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "UsersSign");
-
-            migrationBuilder.DropTable(
-                name: "Location");
+                name: "Tasks");
         }
     }
 }

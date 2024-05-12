@@ -1,27 +1,31 @@
-using Newtonsoft.Json;
 using TaskManager.Enum;
+using TasManager.Models;
 
 namespace TaskManager.Model
 {
-    public class TaskItem(string nome, Guid idUser)
+    public class TaskItem
     {
         public Guid Id { get; init; }
 
-        public string Nome { get; private set; } = nome;
+        public string Nome { get; set; }
 
-        public StatusEnum Status { get; private set; } = StatusEnum.Pendente;
+        public StatusEnum Status { get; set; } = StatusEnum.Pendente;
 
-        public DateTime Data { get; private set; } = DateTime.UtcNow;
+        public DateTime Data { get; set; } = DateTime.UtcNow;
 
-        [JsonIgnore]
-        public Guid IdUser { get; set; } = idUser;
+        public virtual List<UserTasks> UserTasks { get; set; } = new List<UserTasks>(); 
 
-        [JsonIgnore]
-        public virtual UserModel Usuario { get; set; }
-
-        public void UpdateTask(string nome)
+        public TaskItem(string nome)
         {
             Nome = nome;
+        }
+
+        public TaskItem(Guid id, string nome, StatusEnum status, DateTime data)
+        {
+            Id = id;
+            Nome = nome;
+            Status = status;
+            Data = data;
         }
     }
 }

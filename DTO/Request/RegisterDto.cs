@@ -12,7 +12,11 @@ namespace TasManager.DTO.Request
         string Email,
 
         [Required]
-        string Password
+        string Password,
+
+        [Required]
+        [MinLength(8, ErrorMessage = "Cep have 8 caracteres")]
+        string Cep
     )
     {}
 }

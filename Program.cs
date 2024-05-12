@@ -15,14 +15,15 @@ using TaskManager.Repository;
 using TaskManager.Service;
 using TasManager.Interfaces;
 using TasManager.Models;
+using TasManager.Repository;
 using TasManager.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-builder.Services.AddDbContext<TaskManagerContext> (
-    options => options.UseNpgsql (
+builder.Services.AddDbContext<TaskManagerContext> 
+(
+    options => options.UseNpgsql 
+    (
         builder.Configuration.GetConnectionString("DefaultConnection")
     )
 );
@@ -30,10 +31,9 @@ builder.Services.AddDbContext<TaskManagerContext> (
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 builder.Services.AddScoped<ITaskService, TaskService>();  
 
-builder.Services.AddScoped<IViaCepIntegracao, ViaCepIntegracao>(); 
-
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddScoped<IViaCepIntegracao, ViaCepIntegracao>(); 
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 
@@ -44,48 +44,53 @@ builder.Services
 
 // builder.Services.AddMvc(options => options.Filters.Add(typeof(IExceptionFilter)));
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddSwaggerGen(option =>
-{
-    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Description = "API para o controle de Tarefas", Version = "v1" });
-    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+builder.Services.AddSwaggerGen(
+    option => 
     {
-        In = ParameterLocation.Header,
-        Description = "Please enter a valid token",
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        BearerFormat = "JWT",
-        Scheme = "Bearer",
-        Reference = new OpenApiReference
-        {
-            Id = JwtBearerDefaults.AuthenticationScheme,
-            Type = ReferenceType.SecurityScheme
-        }
-        
-    });
-    option.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type=ReferenceType.SecurityScheme,
-                    Id="Bearer"
-                }
-            },
-            new string[]{}
-        }
-    });
-});
+        option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Description = "API para o controle de Tarefas", Version = "v1" });
 
-builder.Services.AddControllers()
-    .AddNewtonsoftJson(options => {
-        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+        option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            In = ParameterLocation.Header,
+            Description = "Please enter a valid token",
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            BearerFormat = "JWT",
+            Scheme = "Bearer",
+            Reference = new OpenApiReference
+            {
+                Id = JwtBearerDefaults.AuthenticationScheme,
+                Type = ReferenceType.SecurityScheme
+            }
+        });
+
+        option.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type=ReferenceType.SecurityScheme,
+                        Id="Bearer"
+                    }
+                },
+                Array.Empty<string>()
+            }
+        });
     }
 );
+
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(
+        options => 
+        {
+            options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+        }
+    )
+;
 
 builder.Services.AddIdentity<UserIdentityApp, IdentityRole>(options =>
 {
@@ -97,7 +102,8 @@ builder.Services.AddIdentity<UserIdentityApp, IdentityRole>(options =>
 }).AddEntityFrameworkStores<TaskManagerContext>();
 
 builder.Services.AddAuthentication(
-    options => {
+    options => 
+    {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultForbidScheme = 
@@ -106,7 +112,8 @@ builder.Services.AddAuthentication(
         options.DefaultSignOutScheme =  JwtBearerDefaults.AuthenticationScheme;
     }
 ).AddJwtBearer(
-    options => {
+    options => 
+    {
         options.TokenValidationParameters = new TokenValidationParameters()
         {
             ValidateIssuer = true,  
@@ -122,8 +129,7 @@ builder.Services.AddAuthentication(
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if(app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();

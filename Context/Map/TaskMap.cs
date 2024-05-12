@@ -9,13 +9,7 @@ namespace TaskManager.Context.Map
         public void Configure(EntityTypeBuilder<TaskItem> Builder)
         {
             Builder.HasKey(entity => entity.Id);
-            Builder.Property(entity => entity.Nome).IsRequired().HasMaxLength(255);
-            
-            Builder
-                .HasOne(task => task.Usuario)
-                .WithMany(login => login.Tasks)
-                .HasForeignKey(task => task.IdUser)
-            ;
+            Builder.Property(entity => entity.Nome).IsRequired();
         }
     }
 }

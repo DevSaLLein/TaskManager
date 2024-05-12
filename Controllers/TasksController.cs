@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using TaskManager.Helpers;
 using TaskManager.Interfaces;
 using TaskManager.DTO;
+using TasManager.Extensions;
 
 namespace TaskManager.Controller
     {
@@ -15,9 +16,11 @@ namespace TaskManager.Controller
             [HttpPost]
             public async Task<ActionResult> CreateTask([FromBody] TaskCreateRequestDto Dto, CancellationToken Token)
             {
-                var GuidFromTask = await _service.CreateTask(Dto, Token);
+                var Username = User.GetUsername();
 
-                return CreatedAtAction(nameof(GetOneTask), new { Id = GuidFromTask }, Created());
+                var stringFromTask = await _service.CreateTask(Dto, Username, Token);
+
+                return CreatedAtAction(nameof(GetOneTask), new { Id = stringFromTask }, Created());
             }
 
             [HttpGet]
@@ -28,15 +31,15 @@ namespace TaskManager.Controller
                 return Ok(Tasks);
             }
 
-            // [HttpGet("/byUser/{Id:guid}")]
-            // public async Task<ActionResult> GetAllTasksByUser([FromQuery] QueryObjectFilter Filter, [FromRoute] Guid Id, CancellationToken Token)
+            // [HttpGet("/byUser/{Id}")]
+            // public async Task<ActionResult> GetAllTasksByUser([FromQuery] QueryObjectFilter Filter, [FromRoute] string Id, CancellationToken Token)
             // {
             //     var TasksByUser = await _service.GetAllTasksByUserResponse(Filter, Id, Token);
 
             //     return Ok(TasksByUser);
             // }
 
-            [HttpGet("{Id:guid}")]
+            [HttpGet("{Id}")]
             public async Task<ActionResult> GetOneTask([FromRoute] Guid Id, CancellationToken Token)
             {
                 TaskResponseDto TaskSelectedById = await _service.GetOneTask(Id, Token);
@@ -46,7 +49,7 @@ namespace TaskManager.Controller
                 return NotFound("Tarefa não encontrada");
             }
 
-            [HttpPut("{Id:guid}")]
+            [HttpPut("{Id}")]
             public async Task<ActionResult> UpdateTask([FromRoute] Guid Id, [FromBody] TaskUpdateRequestDto Dto, CancellationToken Token)
             {
                 if(!ModelState.IsValid) return BadRequest(ModelState);
@@ -58,7 +61,7 @@ namespace TaskManager.Controller
                 return NotFound("Tarefa não encontrada");
             }
 
-            [HttpDelete("{Id:guid}")]        
+            [HttpDelete("{Id}")]        
             public async Task<ActionResult> DeleteTask([FromRoute] Guid Id, CancellationToken Token)
             {
                 bool TaskIsFound = await _service.DeleteTask(Id, Token);

@@ -50,13 +50,13 @@ namespace TaskManager.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "44b9eb58-abe3-462b-8ae0-45f107d17f97",
+                            Id = "e29cfd44-7244-4aaa-83e0-be4a9e45f21c",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "c93b055d-137c-4c51-b4a4-b6413c536533",
+                            Id = "f5668d3f-d968-4328-b51a-9dc650a5aeeb",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -176,6 +176,9 @@ namespace TaskManager.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Cep")
+                        .HasColumnType("text");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
@@ -232,6 +235,21 @@ namespace TaskManager.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("TasManager.Models.UserTasks", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TaskId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("UserId", "TaskId");
+
+                    b.HasIndex("TaskId");
+
+                    b.ToTable("UserTasks");
+                });
+
             modelBuilder.Entity("TaskManager.Model.LocationModel", b =>
                 {
                     b.Property<string>("Cep")
@@ -275,52 +293,16 @@ namespace TaskManager.Migrations
                     b.Property<DateTime>("Data")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("IdUser")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Nome")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("text");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdUser");
-
                     b.ToTable("Tasks");
-                });
-
-            modelBuilder.Entity("TaskManager.Model.UserModel", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Cep")
-                        .HasColumnType("text");
-
-                    b.Property<string>("JwtAuthentication")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Login")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<string>("Senha")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Cep");
-
-                    b.ToTable("UsersSign");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -374,34 +356,33 @@ namespace TaskManager.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TaskManager.Model.TaskItem", b =>
+            modelBuilder.Entity("TasManager.Models.UserTasks", b =>
                 {
-                    b.HasOne("TaskManager.Model.UserModel", "Usuario")
-                        .WithMany("Tasks")
-                        .HasForeignKey("IdUser")
+                    b.HasOne("TaskManager.Model.TaskItem", "Task")
+                        .WithMany("UserTasks")
+                        .HasForeignKey("TaskId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Usuario");
+                    b.HasOne("TasManager.Models.UserIdentityApp", "User")
+                        .WithMany("UserTasks")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Task");
+
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("TaskManager.Model.UserModel", b =>
+            modelBuilder.Entity("TasManager.Models.UserIdentityApp", b =>
                 {
-                    b.HasOne("TaskManager.Model.LocationModel", "Location")
-                        .WithMany("Usuários")
-                        .HasForeignKey("Cep");
-
-                    b.Navigation("Location");
+                    b.Navigation("UserTasks");
                 });
 
-            modelBuilder.Entity("TaskManager.Model.LocationModel", b =>
+            modelBuilder.Entity("TaskManager.Model.TaskItem", b =>
                 {
-                    b.Navigation("Usuários");
-                });
-
-            modelBuilder.Entity("TaskManager.Model.UserModel", b =>
-                {
-                    b.Navigation("Tasks");
+                    b.Navigation("UserTasks");
                 });
 #pragma warning restore 612, 618
         }

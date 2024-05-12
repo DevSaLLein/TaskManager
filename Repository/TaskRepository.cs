@@ -4,18 +4,25 @@ using TaskManager.Helpers;
 using TaskManager.Interfaces;
 using TaskManager.Model;
 using TaskManager.DTO;
+using Microsoft.AspNetCore.Identity;
+using TasManager.Models;
 
 namespace TaskManager.Repository
 {
-    public class TaskRepository(TaskManagerContext Database) : ITaskRepository
+    public class TaskRepository(UserManager<UserIdentityApp> UserIdentity, TaskManagerContext Database) : ITaskRepository
     {
         private readonly TaskManagerContext _database = Database;
+        private readonly UserManager<UserIdentityApp> _user = UserIdentity;
 
-        public async Task<TaskItem> CreateTask(TaskCreateRequestDto Dto, CancellationToken Token)
+        public async Task<TaskItem> CreateTask(TaskCreateRequestDto Dto, string UserName, CancellationToken Token)
         {
-            TaskItem Task = new TaskItem(Dto.Nome, Dto.IdUser);
+            TaskItem Task = new TaskItem(Dto.Nome);
 
-            await _database.AddAsync(Task, Token);
+            var User = await _database.Users.FirstOrDefaultAsync(Entity => Entity.UserName == UserName ,cancellationToken: Token);
+            Guid IdFromUser = Guid.Parse(User.Id);
+
+            await _database.Tasks.AddAsync(Task, Token);
+
             await _database.SaveChangesAsync(Token);
 
             return Task;
@@ -64,12 +71,12 @@ namespace TaskManager.Repository
         public async Task<TaskItem> UpdateTask(TaskUpdateRequestDto dto, Guid Id, CancellationToken Token)
         {
             var TaskIsFound = await GetOneTask(Id, Token);
-            
-            TaskIsFound?.UpdateTask(dto.Nome);
-
-            await _database.SaveChangesAsync(Token);
-
             return TaskIsFound;
         }
+
+        private async Task<TaskItem> CreateRelationUserWithTheTask(string username, Guid IdFromTask)
+        {
+            return null;       
+        } 
     }
 }

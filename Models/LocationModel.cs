@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
+using TasManager.Models;
 
 namespace TaskManager.Model
 {
@@ -29,8 +30,5 @@ namespace TaskManager.Model
         public string Uf { get; set; } = uf;
 
         public string Ddd { get; set; }   = ddd;
-
-        [JsonIgnore]
-        public virtual ICollection<UserModel> Usuários { get; set; }      
     }
 }

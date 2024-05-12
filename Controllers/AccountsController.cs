@@ -1,3 +1,4 @@
+using ConsumoDeAPIs.Integration.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,12 +11,13 @@ namespace TasManager.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AccountsController(UserManager<UserIdentityApp> User, SignInManager<UserIdentityApp> signInManager, ITokenService Token) : ControllerBase
+    public class AccountsController(UserManager<UserIdentityApp> User, SignInManager<UserIdentityApp> signInManager, IViaCepIntegracao viaCep, ITokenService Token) : ControllerBase
     {
 
         private readonly UserManager<UserIdentityApp> _user = User;
         private readonly SignInManager<UserIdentityApp> _signIn = signInManager;
         private readonly ITokenService _token = Token;
+        private readonly IViaCepIntegracao _viaCep = viaCep;
 
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] RegisterDto register)
@@ -24,10 +26,15 @@ namespace TasManager.Controllers
             {
                 if(!ModelState.IsValid) return BadRequest(ModelState);
 
+                var ResultViaCep = await _viaCep.ObterDadosViaCep(register.Cep);
+
+                if(ResultViaCep == null) return NotFound("Cep not found");
+
                 var User = new UserIdentityApp
                 {
                     UserName = register.UserName,
                     Email = register.Email,
+                    Cep = ResultViaCep.Cep
                 };
 
                 var createUser = await _user.CreateAsync(User, register.Password);

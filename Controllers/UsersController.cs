@@ -1,66 +1,31 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using TaskManager.DTO;
-using TaskManager.Helpers;
-using TaskManager.Interfaces;
-using TaskManager.Model;
+using TasManager.Extensions;
+using TasManager.Interfaces;
+using TasManager.Models;
 
-namespace TaskManager.Controller
+namespace TasManager.Controllers
 {
+    // [Authorize]
     [ApiController]
-    [Route("api/[controller]")]
-    public class UsersController(IUserService Service, IConfiguration Configuration) : ControllerBase
+    [Route("[controller]")]
+    public class UsersController(UserManager<UserIdentityApp> UserIdentity, IUserRepository Repository) : ControllerBase
     {
-        private readonly IConfiguration _configuration = Configuration;        
-        private readonly IUserService _service = Service;
-
-
-        [HttpPost]
-        public async Task<IActionResult> SignUp([FromBody] UserCreateRequestDto Dto, CancellationToken Token)
-        {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-
-            var JwtAuthentication = GenerateTokenJWT(Dto.Login);
-            await _service.CreateUser(Dto, JwtAuthentication, Token);
-
-            return Ok(new { Mensage = "Usuário cadastrado com sucesso", JwtAuthentication });          
-        }
+        private readonly UserManager<UserIdentityApp> _user = UserIdentity;
+        private readonly IUserRepository _repository = Repository;
 
         [HttpGet]
-        public async Task<ActionResult> GetAllUsersWithYoursTasksAndLocalizationDetails([FromQuery] QueryObjectFilter Filter, CancellationToken Token)
+        public async Task<IActionResult> GetAllTasksFromOneUser()
         {
-            List<UsuarioResponseDtoWithYoursTasks> UsersWithTasksAndLocalization = await _service.GetAllUsersWithYoursTasksAndLocalizationDetails(Filter, Token);
+            var username = User.GetUsername();
 
-            return Ok(UsersWithTasksAndLocalization);
-        }
+            var UserEntity = await _user.FindByNameAsync(username);
 
-        private string GenerateTokenJWT(string Login)
-        {
-            string Key = _configuration["Jwt:Key"];
-            string Issuer = _configuration["Jwt:Issuer"];
-            string Audience = _configuration["Jwt:Audience"];
+            var UserWithYoursTasks = await _repository.getAllTasks(UserEntity); 
 
-            SymmetricSecurityKey KeyCrip = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Key));
-            SigningCredentials Credential = new SigningCredentials(KeyCrip, SecurityAlgorithms.HmacSha256);
-
-            var Claims = new[]
-            {
-                new Claim(ClaimTypes.Name, Login),
-            };
-
-            var Token = new JwtSecurityToken(
-                issuer: Issuer,
-                audience: Audience,
-                claims: Claims, 
-                expires: DateTime.Now.AddHours(2),
-                signingCredentials: Credential
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(Token);
+            return Ok(UserWithYoursTasks);
         }
     }
 }
