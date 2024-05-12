@@ -6,6 +6,7 @@ using TaskManager.Model;
 using TaskManager.DTO;
 using Microsoft.AspNetCore.Identity;
 using TasManager.Models;
+using Microsoft.AspNetCore.JsonPatch.Internal;
 
 namespace TaskManager.Repository
 {
@@ -45,21 +46,38 @@ namespace TaskManager.Repository
             return TaskIsFound;
         }
         
-        public async Task<List<TaskItem>> GetAllTasks(QueryObjectFilter Filter, CancellationToken Token)
+        public async Task<List<UserTasks>> GetAllTasks(QueryObjectFilter Filter, CancellationToken Token)
         {
-            var Tasks = _database.Tasks.AsQueryable();
+            var Tasks = _database.UserTasks
+                .Include(ut => ut.User)
+                .Include(ut => ut.Task)
+                .AsQueryable();
 
             if(Filter.Status != null)
-                Tasks = Tasks.Where(Entity => Entity.Status == Filter.Status)
+                Tasks = Tasks.Where(Entity => Entity.Task.Status == Filter.Status)
             ;
 
             if(Filter.isSortByData)
-                Tasks = Tasks.OrderByDescending(Task => Task.Data); 
+                Tasks = Tasks.OrderByDescending(Task => Task.Task.Data); 
             ;
+            
+            var userIds = await Tasks.Select(ut => ut.UserId).Distinct().ToListAsync(Token);
 
-            var SkipNumber = (Filter.PageNumber - 1) * Filter.PageSize;
+            var taskList = new List<UserTasks>();
 
-            return await Tasks.Skip(SkipNumber).Take(Filter.PageSize).ToListAsync(Token);
+            foreach (var userId in userIds)
+            {
+                var userTasks = await Tasks
+                    .Where(ut => ut.UserId == userId)
+                    .Skip((Filter.PageNumber - 1) * Filter.PageSize)
+                    .Take(Filter.PageSize)
+                    .ToListAsync(Token)
+                ;
+
+                taskList.AddRange(userTasks);
+            }
+
+            return taskList;
         }
 
         public async Task<TaskItem> GetOneTask(Guid Id, CancellationToken Token)

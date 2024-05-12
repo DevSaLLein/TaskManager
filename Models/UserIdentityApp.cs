@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Identity;
-using Newtonsoft.Json;
 
 namespace TasManager.Models
 {
@@ -7,7 +6,6 @@ namespace TasManager.Models
     {
         public string Cep { get; set; }
 
-        [JsonIgnore]
-        public List<UserTasks> UserTasks { get; set; } = new List<UserTasks>();
+        public List<UserTasks> UserTasks { get; set; }
     }
 }

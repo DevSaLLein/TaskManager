@@ -1,10 +1,10 @@
 namespace TasManager.DTO.Response
 {
-    public record UserCreatedDto
-    (
+    public record UserLoginDto
+     (
         string UserName,
         string Email,
         string Token
     )
-    {}
+    { }
 }

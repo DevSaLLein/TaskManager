@@ -47,7 +47,7 @@ namespace TasManager.Controllers
                     {
                         var Token = _token.CreateToken(User);
 
-                        UserCreatedDto UserDto = new(register.UserName, register.Email, Token);
+                        UserCreatedDto UserDto = new(register.UserName, register.Email, ResultViaCep, Token);
 
                         return Ok(UserDto);
                     }
@@ -76,7 +76,7 @@ namespace TasManager.Controllers
 
             if(!result.Succeeded) return Unauthorized("Invalid password");
 
-            UserCreatedDto UserDto = new(User.UserName, User.Email, _token.CreateToken(User));
+            UserLoginDto UserDto = new(User.UserName, User.Email, _token.CreateToken(User));
 
             return Ok(UserDto);
         }

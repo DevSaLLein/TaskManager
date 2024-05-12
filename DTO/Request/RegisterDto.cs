@@ -16,6 +16,7 @@ namespace TasManager.DTO.Request
 
         [Required]
         [MinLength(8, ErrorMessage = "Cep have 8 caracteres")]
+        [MaxLength(8, ErrorMessage = "Cep have 8 caracteres")]
         string Cep
     )
     {}

@@ -2,6 +2,8 @@ using TaskManager.Helpers;
 using TaskManager.Interfaces;
 using TaskManager.Model;
 using TaskManager.DTO;
+using TasManager.DTO.Response.User;
+using TasManager.Models;
 
 namespace TaskManager.Service
 {
@@ -29,13 +31,16 @@ namespace TaskManager.Service
 
         public async Task<List<TaskResponseDto>> GetAllTasks(QueryObjectFilter Filter, CancellationToken token)
         {
-            List<TaskItem> Tasks = await _repository.GetAllTasks(Filter, token);
+            List<UserTasks> Tasks = await _repository.GetAllTasks(Filter, token);
 
             List<TaskResponseDto> ListOfTasksResponse = new List<TaskResponseDto>();
 
-            foreach(TaskItem TaskItem in Tasks)
+            foreach(UserTasks TaskItem in Tasks)
             {
-                TaskResponseDto TaskReponse = new TaskResponseDto(TaskItem.Nome, TaskItem.Status, TaskItem.Data);
+                var User = TaskItem.User;
+                UserInformationsToTasksDto userInformations = new UserInformationsToTasksDto (User.UserName, User.Email);
+
+                TaskResponseDto TaskReponse = new TaskResponseDto(userInformations, TaskItem.Task.Nome, TaskItem.Task.Status, TaskItem.Task.Data);
 
                 ListOfTasksResponse.Add(TaskReponse);
             }
@@ -46,10 +51,13 @@ namespace TaskManager.Service
         public async Task<TaskResponseDto> GetOneTask(Guid id, CancellationToken token)
         {
             TaskItem Task = await _repository.GetOneTask(id, token);
+
+            var User = Task.UserTasks.Select(Entity => Entity.User).FirstOrDefault();
+            UserInformationsToTasksDto userInformations = new UserInformationsToTasksDto (User.UserName, User.Email);
             
             if(Task != null)
             {
-                TaskResponseDto TaskResponse = new TaskResponseDto(Task.Nome, Task.Status, Task.Data);
+                TaskResponseDto TaskResponse = new TaskResponseDto(userInformations, Task.Nome, Task.Status, Task.Data);
                 return TaskResponse;
             }
 

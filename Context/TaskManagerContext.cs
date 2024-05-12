@@ -11,7 +11,6 @@ namespace TaskManager.Context
     public class TaskManagerContext(DbContextOptions<TaskManagerContext> Option) : IdentityDbContext<UserIdentityApp>(Option)
     {
         public DbSet<TaskItem> Tasks { get; set; }
-        public DbSet<LocationModel> Location { get; set; }
         public DbSet<UserTasks> UserTasks { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder OptionsBuilder)
@@ -24,7 +23,6 @@ namespace TaskManager.Context
         protected override void OnModelCreating(ModelBuilder ModelBuilder)
         {
             ModelBuilder.ApplyConfiguration(new TaskMap());
-            ModelBuilder.ApplyConfiguration(new LocationMap());    
             ModelBuilder.ApplyConfiguration(new UserTasksMap()); 
             
             List<IdentityRole> Roles = new List<IdentityRole>
