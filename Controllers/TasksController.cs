@@ -37,9 +37,9 @@ namespace TaskManager.Controller
             {
                 TaskResponseDto TaskSelectedById = await _service.GetOneTask(Id, Token);
 
-                if(TaskSelectedById != null) return Ok(TaskSelectedById);
+                if(TaskSelectedById == null)  return NotFound("Tarefa não encontrada");
 
-                return NotFound("Tarefa não encontrada");
+                return Ok(TaskSelectedById);
             }
 
             [HttpPut("{Id}")]
@@ -57,6 +57,8 @@ namespace TaskManager.Controller
             [HttpDelete("{Id}")]        
             public async Task<ActionResult> DeleteTask([FromRoute] Guid Id, CancellationToken Token)
             {
+                var Username = User.GetUsername();
+
                 bool TaskIsFound = await _service.DeleteTask(Id, Token);
 
                 if(TaskIsFound) return NoContent();

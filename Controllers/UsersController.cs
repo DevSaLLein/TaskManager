@@ -16,7 +16,7 @@ namespace TasManager.Controllers
         private readonly UserManager<UserIdentityApp> _user = UserIdentity;
         private readonly IUserRepository _repository = Repository;
 
-        [HttpGet]
+        [HttpGet("GetAllTasksByUser")]
         public async Task<IActionResult> GetAllTasksFromOneUser()
         {
             var username = User.GetUsername();

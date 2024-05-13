@@ -4,16 +4,13 @@ using TaskManager.Helpers;
 using TaskManager.Interfaces;
 using TaskManager.Model;
 using TaskManager.DTO;
-using Microsoft.AspNetCore.Identity;
 using TasManager.Models;
-using Microsoft.AspNetCore.JsonPatch.Internal;
 
 namespace TaskManager.Repository
 {
-    public class TaskRepository(UserManager<UserIdentityApp> UserIdentity, TaskManagerContext Database) : ITaskRepository
+    public class TaskRepository(TaskManagerContext Database) : ITaskRepository
     {
         private readonly TaskManagerContext _database = Database;
-        private readonly UserManager<UserIdentityApp> _user = UserIdentity;
 
         public async Task<TaskItem> CreateTask(TaskCreateRequestDto Dto, string UserName, CancellationToken Token)
         {
@@ -32,7 +29,7 @@ namespace TaskManager.Repository
             return Task;
         }
 
-        public async Task<TaskItem> DeleteTask(Guid Id, CancellationToken Token)
+        public async Task<TaskItem> DeleteTask(Guid Id, string UserName, CancellationToken Token)
         {
             var TaskIsFound = await GetOneTask(Id, Token);
 
@@ -51,7 +48,8 @@ namespace TaskManager.Repository
             var Tasks = _database.UserTasks
                 .Include(ut => ut.User)
                 .Include(ut => ut.Task)
-                .AsQueryable();
+                .AsQueryable()
+            ;
 
             if(Filter.Status != null)
                 Tasks = Tasks.Where(Entity => Entity.Task.Status == Filter.Status)
@@ -99,6 +97,7 @@ namespace TaskManager.Repository
             var TaskIsFound = await GetOneTask(Id, Token);
             return TaskIsFound;
         }
+
 
         private async Task<bool> CreateRelationUserWithTheTask(string UserName, Guid IdFromTask, CancellationToken Token)
         {

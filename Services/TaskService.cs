@@ -66,15 +66,8 @@ namespace TaskManager.Service
 
         public async Task<bool> DeleteTask(Guid id, CancellationToken token)
         {
-            TaskItem Task = await _repository.GetOneTask(id, token);
-
-            if(Task != null) 
-            {
-                await _repository.DeleteTask(id, token);
-                return true;
-            }
-
-            return false;
+            await _repository.DeleteTask(id, token);
+            return true;
         }
     }
 }
