@@ -3,6 +3,8 @@ using TaskManager.Helpers;
 using TaskManager.Interfaces;
 using TaskManager.DTO;
 using TasManager.Extensions;
+using TasManager.DTO.Response.User;
+using TasManager.Models;
 
 namespace TaskManager.Controller
     {
@@ -26,7 +28,7 @@ namespace TaskManager.Controller
             [HttpGet]
             public async Task<ActionResult> GetAllTasks([FromQuery] QueryObjectFilter Filter, CancellationToken Token)
             {
-                List<TaskResponseDto> Tasks =  await _service.GetAllTasks(Filter, Token);
+                var Tasks =  await _service.GetAllTasks(Filter, Token);
 
                 return Ok(Tasks);
             }

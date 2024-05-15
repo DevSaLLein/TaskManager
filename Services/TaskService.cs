@@ -29,23 +29,11 @@ namespace TaskManager.Service
             return false;
         }
 
-        public async Task<List<TaskResponseDto>> GetAllTasks(QueryObjectFilter Filter, CancellationToken token)
+        public async Task<List<GetAllUsersWithYoursTasksDto>> GetAllTasks(QueryObjectFilter Filter, CancellationToken token)
         {
-            List<UserTasks> Tasks = await _repository.GetAllTasks(Filter, token);
+            List<GetAllUsersWithYoursTasksDto> Tasks = await _repository.GetAllTasks(Filter, token);
 
-            List<TaskResponseDto> ListOfTasksResponse = new List<TaskResponseDto>();
-
-            foreach(UserTasks TaskItem in Tasks)
-            {
-                var User = TaskItem.User;
-                UserInformationsToTasksDto userInformations = new UserInformationsToTasksDto (User.UserName, User.Email);
-
-                TaskResponseDto TaskReponse = new TaskResponseDto(userInformations, TaskItem.Task.Nome, TaskItem.Task.Status, TaskItem.Task.Data);
-
-                ListOfTasksResponse.Add(TaskReponse);
-            }
-
-            return ListOfTasksResponse;
+            return Tasks;
         }
 
         public async Task<TaskResponseDto> GetOneTask(Guid id, CancellationToken token)

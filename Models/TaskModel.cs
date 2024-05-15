@@ -14,6 +14,7 @@ namespace TaskManager.Model
 
         public DateTime Data { get; set; } = DateTime.UtcNow;
 
+        [JsonIgnore]
         public virtual List<UserTasks> UserTasks { get; set; } 
 
         public TaskItem(string nome)
@@ -27,6 +28,14 @@ namespace TaskManager.Model
             Nome = nome;
             Status = status;
             Data = data;
+        }
+
+        public TaskItem(UserTasks userTasks)
+        {
+            Id = userTasks.TaskId;
+            Nome = userTasks.Task.Nome;
+            Status = userTasks.Task.Status;
+            Data = userTasks.Task.Data;
         }
     }
 }

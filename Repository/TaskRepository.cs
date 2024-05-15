@@ -5,6 +5,8 @@ using TaskManager.Interfaces;
 using TaskManager.Model;
 using TaskManager.DTO;
 using TasManager.Models;
+using TasManager.DTO.Response.User;
+using System.Linq;
 
 namespace TaskManager.Repository
 {
@@ -29,7 +31,7 @@ namespace TaskManager.Repository
             return Task;
         }
 
-        public async Task<TaskItem> DeleteTask(Guid Id, string UserName, CancellationToken Token)
+        public async Task<TaskItem> DeleteTask(Guid Id, CancellationToken Token)
         {
             var TaskIsFound = await GetOneTask(Id, Token);
 
@@ -43,7 +45,7 @@ namespace TaskManager.Repository
             return TaskIsFound;
         }
         
-        public async Task<List<UserTasks>> GetAllTasks(QueryObjectFilter Filter, CancellationToken Token)
+        public async Task<List<GetAllUsersWithYoursTasksDto>> GetAllTasks(QueryObjectFilter Filter, CancellationToken Token)
         {
             var Tasks = _database.UserTasks
                 .Include(ut => ut.User)
@@ -59,23 +61,20 @@ namespace TaskManager.Repository
                 Tasks = Tasks.OrderByDescending(Task => Task.Task.Data); 
             ;
             
-            var userIds = await Tasks.Select(ut => ut.UserId).Distinct().ToListAsync(Token);
+            var TasksList = await Tasks
+                .GroupBy(ut => ut.UserId)
+                .Select(group => new GetAllUsersWithYoursTasksDto
+                (
+                    group.Key,
+                    group.Select(Entity => new UserInformationsToTasksDto(Entity.User.UserName, Entity.User.Email)).FirstOrDefault(),
+                    group.Select(ut => ut.Task).ToList()
+                ))
+                .Skip((Filter.PageNumber - 1) * Filter.PageSize)
+                .Take(Filter.PageSize)
+                .ToListAsync(Token)
+            ;
 
-            var taskList = new List<UserTasks>();
-
-            foreach (var userId in userIds)
-            {
-                var userTasks = await Tasks
-                    .Where(ut => ut.UserId == userId)
-                    .Skip((Filter.PageNumber - 1) * Filter.PageSize)
-                    .Take(Filter.PageSize)
-                    .ToListAsync(Token)
-                ;
-
-                taskList.AddRange(userTasks);
-            }
-
-            return taskList;
+            return TasksList;
         }
 
         public async Task<TaskItem> GetOneTask(Guid Id, CancellationToken Token)
