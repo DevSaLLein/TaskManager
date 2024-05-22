@@ -58,21 +58,20 @@ namespace TaskManager.Repository
             ;
 
             if(Filter.isSortByData)
-                Tasks = Tasks.OrderByDescending(Task => Task.Task.Data); 
+                Tasks = Tasks.OrderByDescending(Task => Task.Task.Data);
             ;
             
             var TasksList = await Tasks
                 .GroupBy(ut => ut.UserId)
                 .Select(group => new GetAllUsersWithYoursTasksDto
                 (
-                    group.Key,
                     group.Select(Entity => new UserInformationsToTasksDto(Entity.User.UserName, Entity.User.Email)).FirstOrDefault(),
                     group.Select(ut => ut.Task).ToList()
                 ))
                 .Skip((Filter.PageNumber - 1) * Filter.PageSize)
                 .Take(Filter.PageSize)
                 .ToListAsync(Token)
-            ;
+            ;   
 
             return TasksList;
         }
