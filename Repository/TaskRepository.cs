@@ -7,12 +7,14 @@ using TaskManager.DTO;
 using TasManager.Models;
 using TasManager.DTO.Response.User;
 using System.Linq;
+using ConsumoDeAPIs;
 
 namespace TaskManager.Repository
 {
-    public class TaskRepository(TaskManagerContext Database) : ITaskRepository
+    public class TaskRepository(TaskManagerContext Database, ViaCepIntegracao ViaCep ) : ITaskRepository
     {
         private readonly TaskManagerContext _database = Database;
+        private readonly ViaCepIntegracao _viaCep = ViaCep;
 
         public async Task<TaskItem> CreateTask(TaskCreateRequestDto Dto, string UserName, CancellationToken Token)
         {
@@ -65,7 +67,13 @@ namespace TaskManager.Repository
                 .GroupBy(ut => ut.UserId)
                 .Select(group => new GetAllUsersWithYoursTasksDto
                 (
-                    group.Select(Entity => new UserInformationsToTasksDto(Entity.User.UserName, Entity.User.Email)).FirstOrDefault(),
+                    group.Select( Entity => new UserInformationsToTasksDto
+                    (
+                        Entity.User.UserName,
+                        Entity.User.Email,
+                        Entity.User.Cep
+                        
+                    )).FirstOrDefault(),
                     group.Select(ut => ut.Task).ToList()
                 ))
                 .Skip((Filter.PageNumber - 1) * Filter.PageSize)
