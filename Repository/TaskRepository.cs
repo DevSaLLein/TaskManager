@@ -6,7 +6,6 @@ using TaskManager.Model;
 using TaskManager.DTO;
 using TasManager.Models;
 using TasManager.DTO.Response.User;
-using System.Linq;
 using ConsumoDeAPIs;
 
 namespace TaskManager.Repository
@@ -103,7 +102,6 @@ namespace TaskManager.Repository
             var TaskIsFound = await GetOneTask(Id, Token);
             return TaskIsFound;
         }
-
 
         private async Task<bool> CreateRelationUserWithTheTask(string UserName, Guid IdFromTask, CancellationToken Token)
         {
