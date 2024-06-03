@@ -83,14 +83,14 @@ builder.Services.AddSwaggerGen(
     }
 );
 
-builder.Services.AddControllers()
-    .AddNewtonsoftJson(
-        options => 
-        {
-            options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-        }
-    )
-;
+    builder.Services.AddControllers()
+        .AddNewtonsoftJson(
+            options => 
+            {
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            }
+        )
+    ;
 
 builder.Services.AddIdentity<UserIdentityApp, IdentityRole>(options =>
 {

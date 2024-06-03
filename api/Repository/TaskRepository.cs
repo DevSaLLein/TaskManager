@@ -10,10 +10,9 @@ using ConsumoDeAPIs;
 
 namespace TaskManager.Repository
 {
-    public class TaskRepository(TaskManagerContext Database, ViaCepIntegracao ViaCep ) : ITaskRepository
+    public class TaskRepository(TaskManagerContext Database) : ITaskRepository
     {
         private readonly TaskManagerContext _database = Database;
-        private readonly ViaCepIntegracao _viaCep = ViaCep;
 
         public async Task<TaskItem> CreateTask(TaskCreateRequestDto Dto, string UserName, CancellationToken Token)
         {

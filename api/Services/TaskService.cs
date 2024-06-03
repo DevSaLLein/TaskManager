@@ -41,7 +41,7 @@ namespace TaskManager.Service
             TaskItem Task = await _repository.GetOneTask(id, token);
 
             var User = Task.UserTasks.Select(Entity => Entity.User).FirstOrDefault();
-            UserInformationsToTasksDto userInformations = new UserInformationsToTasksDto (User.UserName, User.Email);
+            UserInformationsToTasksDto userInformations = new UserInformationsToTasksDto (User.UserName, User.Email, User.Cep);
             
             if(Task != null)
             {
