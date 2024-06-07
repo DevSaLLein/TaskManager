@@ -1,10 +1,7 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
 using TaskManager.Context.Map;
 using TaskManager.Model;
 using TasManager.Context.Map;
-using TasManager.Models;
 
 namespace TaskManager.Context
 {
