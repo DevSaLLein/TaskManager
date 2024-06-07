@@ -1,8 +1,5 @@
 bin
 obj
 
-appsettings.Development.json
-appsettings.json
-
 # Temp
 Exception
