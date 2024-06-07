@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using TaskManager.Model;
 
 namespace TasManager.Models

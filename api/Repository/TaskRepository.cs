@@ -1,12 +1,7 @@
-using Microsoft.EntityFrameworkCore;
-using TaskManager.Context;
 using TaskManager.Helpers;
-using TaskManager.Interfaces;
 using TaskManager.Model;
 using TaskManager.DTO;
-using TasManager.Models;
 using TasManager.DTO.Response.User;
-using ConsumoDeAPIs;
 
 namespace TaskManager.Repository
 {
@@ -72,6 +67,7 @@ namespace TaskManager.Repository
                         Entity.User.Cep
                         
                     )).FirstOrDefault(),
+                    
                     group.Select(ut => ut.Task).ToList()
                 ))
                 .Skip((Filter.PageNumber - 1) * Filter.PageSize)

@@ -8,7 +8,6 @@ namespace TasManager.DTO.Response.User
     (
         UserInformationsToTasksDto user,
         List<TaskItem> tasks
-
     )
     {
         public UserInformationsToTasksDto User  {get; set;} = user;

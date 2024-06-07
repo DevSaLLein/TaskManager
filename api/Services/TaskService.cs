@@ -1,9 +1,7 @@
 using TaskManager.Helpers;
-using TaskManager.Interfaces;
 using TaskManager.Model;
 using TaskManager.DTO;
 using TasManager.DTO.Response.User;
-using TasManager.Models;
 
 namespace TaskManager.Service
 {

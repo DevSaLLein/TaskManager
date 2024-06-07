@@ -1,5 +1,4 @@
 using TaskManager.Model;
-using TasManager.Models;
 
 namespace TasManager.Interfaces
 {

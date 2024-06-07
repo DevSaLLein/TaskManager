@@ -1,6 +1,4 @@
-using Newtonsoft.Json;
 using TaskManager.Enum;
-using TasManager.Models;
 
 namespace TaskManager.Model
 {

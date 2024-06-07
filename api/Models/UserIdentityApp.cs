@@ -1,6 +1,3 @@
-using Microsoft.AspNetCore.Identity;
-using Newtonsoft.Json;
-
 namespace TasManager.Models
 {
     public class UserIdentityApp : IdentityUser

@@ -1,8 +1,4 @@
-using Microsoft.EntityFrameworkCore;
-using TaskManager.Context;
 using TaskManager.Model;
-using TasManager.Interfaces;
-using TasManager.Models;
 
 namespace TasManager.Repository
 {
