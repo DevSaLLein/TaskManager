@@ -17,14 +17,15 @@ namespace api.common
 
         public static void AddServices(this WebApplicationBuilder builder)
         {
-           builder.Services.AddScoped<ITaskRepository, TaskRepository>();
-            builder.Services.AddScoped<ITaskService, TaskService>();  
+            builder.Services.AddTransient<ITaskRepository, TaskRepository>();
 
-            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddTransient<ITaskService, TaskService>();  
 
-            builder.Services.AddScoped<IViaCepIntegracao, ViaCepIntegracao>(); 
+            builder.Services.AddTransient<IUserRepository, UserRepository>();
 
-            builder.Services.AddScoped<ITokenService, TokenService>();
+            builder.Services.AddTransient<IViaCepIntegracao, ViaCepIntegracao>(); 
+
+            builder.Services.AddTransient<ITokenService, TokenService>();
 
             builder.Services
                 .AddRefitClient<IViaCepIntegracaoRefit>()

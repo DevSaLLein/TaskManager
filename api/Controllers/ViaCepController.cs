@@ -1,4 +1,3 @@
-using ConsumoDeAPIs.Integration.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using TaskManager.DTO;
 

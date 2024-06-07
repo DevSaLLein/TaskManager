@@ -1,10 +1,6 @@
 
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TasManager.Extensions;
-using TasManager.Interfaces;
-using TasManager.Models;
 
 namespace TasManager.Controllers
 {

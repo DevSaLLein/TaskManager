@@ -1,11 +1,6 @@
-using ConsumoDeAPIs.Integration.Interfaces;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TasManager.DTO.Request;
 using TasManager.DTO.Response;
-using TasManager.Interfaces;
-using TasManager.Models;
 
 namespace TasManager.Controllers
 {

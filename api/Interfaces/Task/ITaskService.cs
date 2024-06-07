@@ -1,7 +1,6 @@
 using TaskManager.Helpers;
 using TaskManager.DTO;
 using TasManager.DTO.Response.User;
-using TasManager.Models;
 
 namespace TaskManager.Interfaces
 {

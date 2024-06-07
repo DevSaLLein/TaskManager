@@ -1,10 +1,7 @@
 using Microsoft.AspNetCore.Mvc;    
 using TaskManager.Helpers;
-using TaskManager.Interfaces;
 using TaskManager.DTO;
 using TasManager.Extensions;
-using TasManager.DTO.Response.User;
-using TasManager.Models;
 
 namespace TaskManager.Controller
     {
