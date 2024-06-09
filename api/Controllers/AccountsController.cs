@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using TasManager.DTO.Request;
-using TasManager.DTO.Response;
+using TasManager.DTO.Account.Request;
+using TasManager.DTO.Account.Response;
+
 
 namespace TasManager.Controllers
 {
@@ -15,7 +16,7 @@ namespace TasManager.Controllers
         private readonly IViaCepIntegracao _viaCep = viaCep;
 
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody] RegisterDto register)
+        public async Task<IActionResult> Register([FromBody] RegisterRequest register)
         {
             try 
             {
@@ -42,7 +43,7 @@ namespace TasManager.Controllers
                     {
                         var Token = _token.CreateToken(User);
 
-                        UserCreatedDto UserDto = new(register.UserName, register.Email, ResultViaCep, Token);
+                        var UserDto = new RegisterResponse (register.UserName, register.Email, ResultViaCep, Token);
 
                         return Ok(UserDto);
                     }
@@ -59,19 +60,19 @@ namespace TasManager.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto loginDto, CancellationToken Token)
+        public async Task<IActionResult> Login([FromBody] LoginRequest login, CancellationToken Token)
         {   
             if(!ModelState.IsValid) return BadRequest(ModelState);
 
-            var User = await _user.Users.FirstOrDefaultAsync(Entity => Entity.UserName == loginDto.UserName, cancellationToken: Token);
+            var User = await _user.Users.FirstOrDefaultAsync(Entity => Entity.UserName == login.UserName, cancellationToken: Token);
 
             if(User == null) return NotFound("Invalid UserName");
 
-            var result = await _signIn.CheckPasswordSignInAsync(User, loginDto.Password, Token.CanBeCanceled);
+            var result = await _signIn.CheckPasswordSignInAsync(User, login.Password, Token.CanBeCanceled);
 
             if(!result.Succeeded) return Unauthorized("Invalid password");
 
-            UserLoginDto UserDto = new(User.UserName, User.Email, _token.CreateToken(User));
+            var UserDto = new LoginResponse (User.UserName, User.Email, _token.CreateToken(User));
 
             return Ok(UserDto);
         }

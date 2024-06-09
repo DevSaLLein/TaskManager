@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace api.common
 {
     public static class BuilderExtension
@@ -40,6 +42,11 @@ namespace api.common
                     }
                 )
             ;
+
+            builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>
+            (
+                options => options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles
+            );
         }  
 
         public static void AddDocumentation(this WebApplicationBuilder builder)
@@ -80,6 +87,8 @@ namespace api.common
                             Array.Empty<string>()
                         }
                     });
+
+                    option.CustomSchemaIds(x => x.FullName);
                 }
             );
         }

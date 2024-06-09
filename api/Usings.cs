@@ -18,3 +18,5 @@ global using TasManager.Models;
 global using TasManager.Repository;
 global using TasManager.Services;
 global using api.common;
+
+global using api.Routes;

@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace TasManager.DTO.Request
+namespace TasManager.DTO.Account.Request
 {
-    public record RegisterDto
+    public record RegisterRequest
     (
         [Required]
         string UserName,

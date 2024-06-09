@@ -1,7 +1,10 @@
 using TaskManager.Helpers;
 using TaskManager.Model;
-using TaskManager.DTO;
-using TasManager.DTO.Response.User;
+using api.DTO.Tarefa.Request;
+using api.DTO.Tarefa.Response;
+using TasManager.DTO.Account.Response;
+using TaskManager.DTO.Tarefa.Response;
+using api.DTO;
 
 namespace TaskManager.Service
 {
@@ -9,13 +12,18 @@ namespace TaskManager.Service
     {
         private readonly ITaskRepository _repository = repository;
 
-        public async Task<Guid> CreateTask(TaskCreateRequestDto dto, string UserName, CancellationToken token)
+        public async Task<TarefaResponse> CreateTask(TarefaCreateRequest dto, string UserName, CancellationToken token)
         {
             var Task = await _repository.CreateTask(dto, UserName, token);
-            return Task.Id;
+            return new TarefaResponse {
+                Id = Task.Id,
+                Nome = Task.Nome,
+                Status = Task.Status,
+                Data = Task.Data
+            };
         }
 
-        public async Task<bool> UpdateTask(Guid id, TaskUpdateRequestDto dto, CancellationToken token)
+        public async Task<bool> UpdateTask(Guid id, TarefaUpdateRequest dto, CancellationToken token)
         {
             TaskItem Task = await _repository.UpdateTask(dto, id, token);
 
@@ -27,23 +35,23 @@ namespace TaskManager.Service
             return false;
         }
 
-        public async Task<List<GetAllUsersWithYoursTasksDto>> GetAllTasks(QueryObjectFilter Filter, CancellationToken token)
+        public async Task<List<GetAllUsersWithYoursTarefas>> GetAllTasks(QueryObjectFilter Filter, CancellationToken token)
         {
-            List<GetAllUsersWithYoursTasksDto> Tasks = await _repository.GetAllTasks(Filter, token);
+            List<GetAllUsersWithYoursTarefas> Tasks = await _repository.GetAllTasks(Filter, token);
 
             return Tasks;
         }
 
-        public async Task<TaskResponseDto> GetOneTask(Guid id, CancellationToken token)
+        public async Task<TarefaResponseWithUser> GetOneTask(Guid id, CancellationToken token)
         {
             TaskItem Task = await _repository.GetOneTask(id, token);
 
             var User = Task.UserTasks.Select(Entity => Entity.User).FirstOrDefault();
-            UserInformationsToTasksDto userInformations = new UserInformationsToTasksDto (User.UserName, User.Email, User.Cep);
+            var userInformations = new UserInformationsToTarefas (User.UserName, User.Email);
             
             if(Task != null)
             {
-                TaskResponseDto TaskResponse = new TaskResponseDto(userInformations, Task.Nome, Task.Status, Task.Data);
+                var TaskResponse = new TarefaResponseWithUser(userInformations, Task.Nome, Task.Status, Task.Data);
                 return TaskResponse;
             }
 
@@ -54,6 +62,13 @@ namespace TaskManager.Service
         {
             await _repository.DeleteTask(id, token);
             return true;
+        }
+
+        public async Task<GetAllResponsePaged<List<TaskItem>>> GetAllTasksFromUser(PagedRequest request)
+        {
+            var response = await _repository.GetAllTasksFromUser(request);
+
+            return response;
         }
     }
 }

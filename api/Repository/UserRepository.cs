@@ -6,7 +6,7 @@ namespace TasManager.Repository
     {
         private readonly TaskManagerContext _database = Database;
 
-        public async Task<List<TaskItem>> getAllTasks(UserIdentityApp user)
+        public async Task<List<TaskItem>> GetAllTasks(UserIdentityApp user)
         {
             return await _database.UserTasks
                 .Where(Entity => Entity.UserId == user.Id)

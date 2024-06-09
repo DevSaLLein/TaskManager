@@ -1,8 +1,8 @@
 using TaskManager.DTO;
 
-namespace TasManager.DTO.Response
+namespace TasManager.DTO.Account.Response
 {
-    public record UserCreatedDto
+    public record RegisterResponse
     (
         string UserName,
         string Email,

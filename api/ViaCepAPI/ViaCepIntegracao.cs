@@ -1,5 +1,3 @@
-using ConsumoDeAPIs.Integration.Interfaces;
-using ConsumoDeAPIs.Integration.Response.Refit;
 using TaskManager.DTO;
 
 namespace ConsumoDeAPIs

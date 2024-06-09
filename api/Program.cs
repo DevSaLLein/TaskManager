@@ -1,3 +1,4 @@
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddConfiguration();
@@ -21,6 +22,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapController();
 
 app.UseHttpsRedirection();
 

@@ -1,6 +1,6 @@
-namespace TasManager.DTO.Response
+namespace TasManager.DTO.Account.Response
 {
-    public record UserLoginDto
+    public record LoginResponse
      (
         string UserName,
         string Email,

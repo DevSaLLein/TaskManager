@@ -1,15 +1,18 @@
 using TaskManager.Helpers;
 using TaskManager.Model;
-using TaskManager.DTO;
-using TasManager.DTO.Response.User;
+using api.DTO.Tarefa.Response;
+using api.DTO;
+using TasManager.DTO.Account.Response;
+using api.DTO.Tarefa.Request;
 
 namespace TaskManager.Repository
 {
-    public class TaskRepository(TaskManagerContext Database) : ITaskRepository
+    public class TaskRepository(TaskManagerContext Database, IViaCepIntegracao viaCep) : ITaskRepository
     {
         private readonly TaskManagerContext _database = Database;
+        private readonly IViaCepIntegracao _viaCep = viaCep;
 
-        public async Task<TaskItem> CreateTask(TaskCreateRequestDto Dto, string UserName, CancellationToken Token)
+        public async Task<TaskItem> CreateTask(TarefaCreateRequest Dto, string UserName, CancellationToken Token)
         {
             TaskItem Task = new TaskItem(Dto.Nome);
 
@@ -40,11 +43,12 @@ namespace TaskManager.Repository
             return TaskIsFound;
         }
         
-        public async Task<List<GetAllUsersWithYoursTasksDto>> GetAllTasks(QueryObjectFilter Filter, CancellationToken Token)
+        public async Task<List<GetAllUsersWithYoursTarefas>> GetAllTasks(QueryObjectFilter Filter, CancellationToken Token)
         {
             var Tasks = _database.UserTasks
                 .Include(ut => ut.User)
                 .Include(ut => ut.Task)
+                .AsNoTracking()
                 .AsQueryable()
             ;
 
@@ -58,14 +62,12 @@ namespace TaskManager.Repository
             
             var TasksList = await Tasks
                 .GroupBy(ut => ut.UserId)
-                .Select(group => new GetAllUsersWithYoursTasksDto
+                .Select(group => new GetAllUsersWithYoursTarefas
                 (
-                    group.Select( Entity => new UserInformationsToTasksDto
+                    group.Select( Entity => new UserInformationsToTarefas
                     (
                         Entity.User.UserName,
-                        Entity.User.Email,
-                        Entity.User.Cep
-                        
+                        Entity.User.Email
                     )).FirstOrDefault(),
                     
                     group.Select(ut => ut.Task).ToList()
@@ -76,6 +78,47 @@ namespace TaskManager.Repository
             ;   
 
             return TasksList;
+        }
+
+        public async Task<GetAllResponsePaged<List<TaskItem>>> GetAllTasksFromUser(PagedRequest request)
+        {
+            var user = await _database
+                .Users
+                .Where(x => x.UserName == request.UserName)
+                .FirstOrDefaultAsync()
+            ;   
+
+            var query = _database
+                .UserTasks
+                .AsNoTracking()
+                .Where(x => x.UserId == user.Id)
+                .OrderBy(x => x.Task.Nome)
+            ;
+
+            var tasks = await query
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(x => x.Task)
+                .ToListAsync()
+            ;
+
+            var count = await query.CountAsync(); 
+
+            var localidade = await _viaCep.ObterDadosViaCep(user.Cep);
+
+            return new GetAllResponsePaged<List<TaskItem>>
+            (
+                new UserInformationsToTarefas
+                (
+                    user.UserName, 
+                    user.Email
+                ),
+                localidade,
+                tasks,
+                count,
+                request.PageNumber,
+                request.PageSize   
+            );     
         }
 
         public async Task<TaskItem> GetOneTask(Guid Id, CancellationToken Token)
@@ -92,7 +135,7 @@ namespace TaskManager.Repository
             return await _database.Tasks.FindAsync(taskItem.Id);
         }
 
-        public async Task<TaskItem> UpdateTask(TaskUpdateRequestDto dto, Guid Id, CancellationToken Token)
+        public async Task<TaskItem> UpdateTask(TarefaUpdateRequest dto, Guid Id, CancellationToken Token)
         {
             var TaskIsFound = await GetOneTask(Id, Token);
             return TaskIsFound;
